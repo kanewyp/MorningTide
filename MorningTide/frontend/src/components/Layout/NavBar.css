@@ -1,0 +1,128 @@
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(168, 201, 232, 0.2);
+    padding: 16px 0;
+}
+
+.navbar-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: #2C3E50;
+}
+
+.brand-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.brand-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #6B9DC9 0%, #89B5D9 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.navbar-menu {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: #5A6C7D;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+    .nav-item: hover {
+        background: #EBF4FA;
+        color: #4A7BA7;
+    }
+
+    .nav-item. active {
+        background: linear-gradient(135deg, #6B9DC9 0%, #89B5D9 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(107, 157, 201, 0.3);
+    }
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: #EBF4FA;
+    border-radius: 10px;
+    color: #6B9DC9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .icon-button:hover {
+        background: #6B9DC9;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.username {
+    font-weight: 500;
+    color: #2C3E50;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .navbar-container {
+        flex-wrap: wrap;
+    }
+
+    .navbar-menu {
+        order: 3;
+        width: 100%;
+        justify-content: space-around;
+        margin-top: 16px;
+    }
+
+    . nav-item span {
+        display: none;
+    }
+}

@@ -1,0 +1,168 @@
+/* Import Google Fonts - professional typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* RESET - ensures consistent styling across browsers */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Makes width/height include padding/border */
+}
+
+/* BODY - applies to entire page */
+body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #F5F9FC 0%, #E8F2F7 100%); /* Subtle gradient */
+    color: #2C3E50;
+    min-height: 100vh; /* At least full viewport height */
+    overflow-x: hidden; /* No horizontal scrollbar */
+}
+
+/* CUSTOM SCROLLBAR - subtle ocean theme */
+::-webkit-scrollbar {
+    width: 8px; /* Thin scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #F5F9FC; /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+    background: #A8C9E8; /* Draggable part */
+    border-radius: 4px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #6B9DC9; /* Darker on hover */
+    }
+
+/* WAVE ANIMATION - creates the ocean feel */
+. wave-background {
+    position: fixed; /* Stays in place when scrolling */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Behind all content */
+    opacity: 0.4; /* Semi-transparent */
+}
+
+.wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 200%; /* Wider than screen for smooth animation */
+    height: 200px;
+    background: linear-gradient(180deg, transparent, rgba(168, 201, 232, 0.3));
+    animation: wave 15s linear infinite; /* Continuous loop */
+}
+
+    . wave: nth-child(2) {
+        animation: wave 20s linear infinite; /* Different speed for depth */
+        opacity: 0.5;
+        bottom: 10px; /* Slightly offset */
+    }
+
+/* KEYFRAMES - defines the animation steps */
+@keyframes wave {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+
+    50% {
+        transform: translateX(-25%) translateY(-10px); /* Move and bob */
+    }
+
+    100% {
+        transform: translateX(-50%) translateY(0); /* Complete cycle */
+    }
+}
+
+/* GLASS MORPHISM - frosted glass effect (modern design trend) */
+.glass {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Blur what's behind */
+    border: 1px solid rgba(168, 201, 232, 0.2);
+    box-shadow: 0 8px 32px rgba(107, 157, 201, 0.12);
+}
+
+/* BUTTON STYLES - reusable button classes */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer; /* Shows hand cursor */
+    transition: all 0.3s ease; /* Smooth hover effect */
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6B9DC9 0%, #89B5D9 100%); /* Gradient */
+    color: white;
+    box-shadow: 0 4px 16px rgba(107, 157, 201, 0.3); /* Elevated look */
+}
+
+    .btn-primary:hover {
+        transform: translateY(-2px); /* Lift up on hover */
+        box-shadow: 0 6px 20px rgba(107, 157, 201, 0.4); /* Bigger shadow */
+    }
+
+.btn-secondary {
+    background: white;
+    color: #6B9DC9;
+    border: 2px solid #6B9DC9;
+}
+
+    . btn-secondary:hover {
+        background: #EBF4FA; /* Subtle background on hover */
+    }
+
+/* INPUT STYLES - consistent form inputs */
+.input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #D4E4F0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+    .input:focus {
+        outline: none; /* Remove default browser outline */
+        border-color: #6B9DC9; /* Highlight border */
+        box-shadow: 0 0 0 3px rgba(107, 157, 201, 0.1); /* Glow effect */
+    }
+
+/* CARD STYLES - container component */
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(107, 157, 201, 0.12);
+    transition: all 0.3s ease;
+}
+
+    .card:hover {
+        box-shadow: 0 8px 24px rgba(107, 157, 201, 0.16); /* Lift on hover */
+        transform: translateY(-2px);
+    }
+
+/* FADE IN ANIMATION - smooth entrance */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px); /* Start below */
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0); /* End in place */
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease forwards;
+}

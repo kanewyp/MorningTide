@@ -1,0 +1,245 @@
+.calendar-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+}
+
+.calendar-container {
+    padding: 32px;
+}
+
+.calendar-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: #2C3E50;
+    margin-bottom: 8px;
+}
+
+.calendar-subtitle {
+    color: #5A6C7D;
+    margin-bottom: 24px;
+}
+
+/* React Calendar Customization */
+.react-calendar {
+    width: 100%;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+}
+
+.react-calendar__tile {
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: 2px solid #E8F2F7;
+    background: white;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+    .react-calendar__tile:hover {
+        background: #EBF4FA;
+        border-color: #A8C9E8;
+    }
+
+.react-calendar__tile--active {
+    background: #6B9DC9 !important;
+    color: white !important;
+    border-color: #6B9DC9 !important;
+}
+
+.react-calendar__tile. has-entry {
+    border-color: #6B9DC9;
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5F9FC 100%);
+}
+
+.react-calendar__month-view__days__day--weekend {
+    color: #6B9DC9;
+}
+
+.react-calendar__navigation button {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2C3E50;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+    .react-calendar__navigation button:hover {
+        background: #EBF4FA;
+    }
+
+.calendar-tile-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.tile-emotions {
+    display: flex;
+    gap: 3px;
+}
+
+.tile-emotion-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.tile-score {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.calendar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid #E8F2F7;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #5A6C7D;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.selected-entry {
+    padding: 24px;
+    height: fit-content;
+}
+
+    .selected-entry h3 {
+        font-size: 20px;
+        color: #2C3E50;
+        margin-bottom: 20px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+.entry-score-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #F5F9FC;
+    border-radius: 12px;
+}
+
+.score-badge {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+.entry-emotions-list h4 {
+    font-size: 16px;
+    color: #2C3E50;
+    margin-bottom: 12px;
+}
+
+.entry-emotion-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: #F5F9FC;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.emotion-number {
+    width: 24px;
+    height: 24px;
+    background: #6B9DC9;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.emotion-text {
+    flex: 1;
+    font-weight: 500;
+    color: #2C3E50;
+    text-transform: capitalize;
+}
+
+.emotion-prob {
+    font-size: 13px;
+    color: #5A6C7D;
+}
+
+.entry-preview {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #E8F2F7;
+}
+
+    .entry-preview h4 {
+        font-size: 16px;
+        color: #2C3E50;
+        margin-bottom: 12px;
+    }
+
+    .entry-preview p {
+        color: #5A6C7D;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+.empty-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    text-align: center;
+    height: fit-content;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.empty-selection p {
+    color: #8499AA;
+    font-size: 16px;
+}
+
+@media (max-width: 1024px) {
+    .calendar-page-container {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,5 @@
+{
+  "model": "llama2: 13b",
+  "prompt": "What are coping strategies for anxiety?",
+  "stream": false
+}

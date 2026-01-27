@@ -1,0 +1,461 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>f9f122ef-2ee0-43cc-b287-91711ab3b6f7</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>MorningTide</Name>
+    <RootNamespace>MorningTide</RootNamespace>
+    <InterpreterId>MSBuild|morningtide|$(MSBuildProjectFullPath)</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="app\api\analysis.py" />
+    <Compile Include="app\api\auth.py" />
+    <Compile Include="app\api\journal.py" />
+    <Compile Include="app\api\rag.py" />
+    <Compile Include="app\api\therapy_suggest.py" />
+    <Compile Include="app\api\__init__.py" />
+    <Compile Include="app\config.py" />
+    <Compile Include="app\database.py" />
+    <Compile Include="app\main.py" />
+    <Compile Include="app\ml\dataset.py" />
+    <Compile Include="app\ml\importance_scorer.py" />
+    <Compile Include="app\ml\inference.py" />
+    <Compile Include="app\ml\long_text_handler.py" />
+    <Compile Include="app\ml\preprocess.py" />
+    <Compile Include="app\ml\model.py" />
+    <Compile Include="app\ml\rag\generator.py" />
+    <Compile Include="app\ml\rag\indexer.py" />
+    <Compile Include="app\ml\rag\runner.py" />
+    <Compile Include="app\ml\rag\utils.py" />
+    <Compile Include="app\ml\train.py" />
+    <Compile Include="app\ml\utils.py" />
+    <Compile Include="app\ml\__init__.py" />
+    <Compile Include="app\models\journal_entry.py" />
+    <Compile Include="app\models\user.py" />
+    <Compile Include="app\models\rag_document.py" />
+    <Compile Include="app\models\__init__.py" />
+    <Compile Include="app\ml\rag\embedding.py" />
+    <Compile Include="app\ml\rag\retriever.py" />
+    <Compile Include="app\ml\rag\vector_store.py" />
+    <Compile Include="app\ml\rag\__init__.py" />
+    <Compile Include="app\schemas\analysis.py" />
+    <Compile Include="app\schemas\journal.py" />
+    <Compile Include="app\schemas\rag.py" />
+    <Compile Include="app\schemas\__init__.py" />
+    <Compile Include="app\__init__.py" />
+    <Compile Include="extract_pdf_chunks.py" />
+    <Compile Include="fix_database.py" />
+    <Compile Include="populate_diary_entry_for_testing.py" />
+    <Compile Include="requirements_test.txt" />
+    <Compile Include="reset_database.py" />
+    <Compile Include="run_server.py" />
+    <Compile Include="start_app.bat" />
+    <Compile Include="test.py" />
+    <Compile Include="tests\conftest.py" />
+    <Compile Include="tests\test_rag_integration.py" />
+    <Compile Include="tests\test_rag_unit.py" />
+    <Compile Include="test_API_endpoint.py" />
+    <Compile Include="test_database_connection.py" />
+    <Compile Include="test_inference.py" />
+    <Compile Include="test_rag_endpoints.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="morningtide\">
+      <Id>morningtide</Id>
+      <Version>3.13</Version>
+      <Description>morningtide (Python 3.13 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\" />
+    <Folder Include="app\api\" />
+    <Folder Include="app\models\" />
+    <Folder Include="app\ml\" />
+    <Folder Include="app\ml\rag\" />
+    <Folder Include="app\schemas\" />
+    <Folder Include="data\vector_store\" />
+    <Folder Include="data\therapy_corpus\" />
+    <Folder Include="data\processed\" />
+    <Folder Include="data\raw\" />
+    <Folder Include="data\" />
+    <Folder Include="checkpoints\" />
+    <Folder Include="frontend\" />
+    <Folder Include="frontend\public\audio\" />
+    <Folder Include="frontend\src\" />
+    <Folder Include="frontend\public\" />
+    <Folder Include="frontend\src\components\" />
+    <Folder Include="frontend\src\components\Auth\" />
+    <Folder Include="frontend\src\components\Layout\" />
+    <Folder Include="frontend\src\components\Diary\" />
+    <Folder Include="frontend\src\components\Calendar\" />
+    <Folder Include="frontend\src\components\History\" />
+    <Folder Include="frontend\src\components\Chatbot\" />
+    <Folder Include="frontend\src\context\" />
+    <Folder Include="frontend\src\styles\" />
+    <Folder Include="frontend\src\services\" />
+    <Folder Include="frontend\src\pages\" />
+    <Folder Include="tests\" />
+    <Folder Include="static\" />
+    <Folder Include="static\content\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".env" />
+    <Content Include=".gitignore" />
+    <Content Include="data\raw\emotion_dataset.csv" />
+    <Content Include="data\therapy_corpus\1 Emotion Surfing.pdf" />
+    <Content Include="data\therapy_corpus\AI and Your Mental Health.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 01 - What is Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 02 - Vicious Cycle of Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 03 - Analysing your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 04 - Unhelpful Thinking Styles.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 05 - Behavioural Experiments Negative Predictions.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 06 - Situational Exposure.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 07 -What are Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 08 - Breathing Retraining.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 09 - Progressive Muscle Relaxation.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 10 - Coping with Stress.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 11 - Stress and Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 12 - Anxiety and Exercise.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 13 - What is needle phobia.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 14 - Overcoming needle phobia.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 15 - CBT for Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 16 - Different Types of Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 17 - Media Literacy.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 18 - Anxiety Surfing.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 19 - Reassurance Seeking Carers.pdf" />
+    <Content Include="data\therapy_corpus\Anxiety Information Sheet - 20 - Reducing Reassurance Seeking.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 01 - What is Assertiveness.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 02 - How to Recognise Assertive Behaviour.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 03 - How to Think More Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 04 - How to Behave More Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 05 - Reducing Physical Tension.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 06 - How to Say No Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 07  - Dealing With Criticism Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 08 - How to Deal with Disappointment Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 09 - Giving and Receiving Compliments Assertively.pdf" />
+    <Content Include="data\therapy_corpus\Assert Yourself - 10 - Putting it All Together.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 01 - Overview of Depression.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 02 - Behavioural Strategies.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 03 - The Thinking-Feeling Connection.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 04 - The ABC Analysis.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 05 - Unhelpful Thinking Styles.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 06 - Detective Work and Disputation.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 07 - The End Result.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 08 - Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Back from the Bluez - 09 - Self-Management.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 01 - What is Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 02 - What causes Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 03 - Medications for Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 04 - Psychotherapy for Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 05 - Detecting Early Warning Signs.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 06 - Mood and Symptom Monitoring.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 07 - Vicious Cycle of Depression.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 08 - Behavioural Activation Fun &amp; Achievement.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 09 - Fun Activities Catalogue.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 10 - Improving How You Feel.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 11 - Thinking and Feeling.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 12 - Analysing Your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 13 - Changing Your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 14 - Unhelpful Thinking Style.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 15 - Cognitive Changes in Mania.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 16 - Preventing Manic Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 17 - Preventing Mania.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 18 - Organising your Ideas.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 19 - Coping with Stressful Events.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 20 - Problem Solving.pdf" />
+    <Content Include="data\therapy_corpus\Bipolar Information Sheet - 21 - Staying Healthy.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 01 - What Are Eating Disorders_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 02 - What Keeps Eating Disorders Going_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 03 - Understanding the Number On the Scale_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 04 - Self Monitoring_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 05 - Food and Energy_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 06 - Eating For Recovery - Part 1_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 07 - Eating for Recovery - Part 2_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 08 - Binge Eating_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 09 - Purging_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 10 - Driven Exercise_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 11 - Body Image I - Body Checking_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 12 - Body Image II - Body Avoidance_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 13 - Core Beliefs_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 14 - Maintaining Your Gains and Dealing with Setbacks_Fillable.pdf" />
+    <Content Include="data\therapy_corpus\Break Free From ED - 15 - Getting Educated About Eating Disorders Education Pack.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 01 - Understanding Body Dysmorphic Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 02 - What Keeps BDD Going.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 03 - Reducing Appearance Preoccupation.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 04 - Reducing Checking and Reassurance Seeking.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 05 - Overcoming Negative Predictions, Avoidance, Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 06 - Adjusting Appearance Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Building Body Acceptance - 07 - Self-Management Planning.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 01 - Understanding Self-Compassion.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 02 - Barriers to Self-Compassion.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 03 - Preparing for Self-Compassion.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 04 - Compassionate Imagery.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 05 - Self-Compassionate Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 06 - Self-Compassionate Behaviour.pdf" />
+    <Content Include="data\therapy_corpus\Building Self-Compassion - 07 - Self-Compassionate Living.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 01 - What is depression.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 02 - What Causes Depression.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 03 - Psychotherapy for Depression.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 04 - Vicious Cycle of Depression.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 05 - Behavioural Activation Fun &amp; Achievement.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 06 - Fun Activities Catalogue.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 07 - Improving how you Feel.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 08 - Thinking and Feeling.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 09 - Analysing your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 10 - Changing your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 11- Unhelpful Thinking Styles.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 12 - What are Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 13 - Problem Solving.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 14 - Staying Healthy.pdf" />
+    <Content Include="data\therapy_corpus\Depression Information Sheet - 15 - Grief and Bereavement.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - A Guide to Self-Monitoring.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - All About Iron.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - ARFID.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Atypical Anorexia Nervosa.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Binge Eating Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Body Checking and Avoidance.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Body Image and Body Dissatisfaction.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Calcium and Bone Health.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Carbohydrates Myths and Facts.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Clean Eating.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Counting Calories.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Dietary Guidelines During Recovery.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Eating Disorders and Hormones.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Eating Disorders and Neurobiology.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Eating Disorders and Pregnancy.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Eating Disorders in Men.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Evaluating Dietary Advice.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Family Based Therapy for consumers carers and professionals.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Gastrointestinal Problems.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Information for Carers.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Laxative Misuse.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Making Sense of Serving Sizes.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Media and Body Image.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Metabolism and Eating Disorders.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Normal Eating vs Disordered Eating.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Orientation to Treatment.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Regular Eating for Recovery.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Set Point Theory.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - The Facts on Fat.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - The REAL Food Pyramid.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Unhealthy Exercise.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Unhelpful Thinking Styles.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Vegetarian Diet and Eating Disorders.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Vomiting and Your Health.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Weekly Weighing.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - What are Eating Disorders.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - What are Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - What are the Risks.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - What is Binge Eating.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - What is Starvation Syndrome.pdf" />
+    <Content Include="data\therapy_corpus\Eating Disorders Information Sheet - Why Diets Do Not Work.pdf" />
+    <Content Include="data\therapy_corpus\Facing Your Feelings - 01 - Understanding Distress Intolerance.pdf" />
+    <Content Include="data\therapy_corpus\Facing Your Feelings - 02 - Accepting Distress.pdf" />
+    <Content Include="data\therapy_corpus\Facing Your Feelings - 03 - Improving Distress.pdf" />
+    <Content Include="data\therapy_corpus\Facing Your Feelings - 04 - Tolerating Distress.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 01 - What is Generalised Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 02 - What is Mindfulness.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 03 - Mindfulness and Letting go.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 04 - How Worry Works.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 05 - Postpone your Worry.pdf" />
+    <Content Include="data\therapy_corpus\Generalised Anxiety Information Sheet - 06 - Accepting Uncertainty.pdf" />
+    <Content Include="data\therapy_corpus\Health Anxiety Information Sheet - 01-What is Health Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Health Anxiety Information Sheet - 02-What are Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Health Anxiety Information Sheet - 03- Dealing with health information.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 01 - Understanding Health Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 02 - How Health Anxiety Develops.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 03 - What Keeps Health Anxiety Going.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 04 - Reducing Your Focus on Health Symptoms and Worries.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 05 - Re-Evaluating Unhelpful Health-Related Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 06 - Reducing Checking and Reassurance-Seeking.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 07 - Challenging Avoidance and Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 08 -Adjusting Health Rules and Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Helping Health Anxiety - 09 - Healthy Living and Self-Management Planning.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 01 - What is Low Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 02 - How Low Self-Esteem Develops.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 03 - How Low Self-Esteem is Maintained.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 04 - Biased Expectations.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 05 - Negative Self-Evaluations.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 06 - Accepting Yourself.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 07 - Adjusting Rules and Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 08 - Developing Balanced Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Improving Self-Esteem - 09 - Healthy Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Info What is Self Compassion.pdf" />
+    <Content Include="data\therapy_corpus\Info-What is Distress Intolerance.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 01 - Overview of Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 02 - Treatment Options for Bipolar Disorder.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 03 - Self Monitoring for Relapse Prevention.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 04 - Behavioural Strategies for Depression.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 05 - Cognitive Strategies for Depression.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 06 - Cognitive Strategies for Mania.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 07 - Behavioural Strategies for Preventing Mania.pdf" />
+    <Content Include="data\therapy_corpus\Keeping Your Balance - 08 - Coping with Psychosocial Stressors and Self-Management.pdf" />
+    <Content Include="data\therapy_corpus\Module 1 - Understanding Social Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Module 1 The Impact of Appearance Overconcern.pdf" />
+    <Content Include="data\therapy_corpus\Module 10 - Maintaining Your Gains and Dealing with Setbacks.pdf" />
+    <Content Include="data\therapy_corpus\Module 2 - Overcoming Negative Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Module 2 What Keeps Appearance Concerns Going.pdf" />
+    <Content Include="data\therapy_corpus\Module 3 - Overcoming Avoidance.pdf" />
+    <Content Include="data\therapy_corpus\Module 3 Appearance Focused Attention.pdf" />
+    <Content Include="data\therapy_corpus\Module 4 - Behavioural Experiment Stepladders.pdf" />
+    <Content Include="data\therapy_corpus\Module 4 Body Checking &amp; Reassurance Seeking.pdf" />
+    <Content Include="data\therapy_corpus\Module 5 - Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Module 5 Appearance Altering Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Module 6 - The Role of Attention.pdf" />
+    <Content Include="data\therapy_corpus\Module 6 Avoidance &amp; Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Module 7 - Negative Self Imagery.pdf" />
+    <Content Include="data\therapy_corpus\Module 7 Overvaluing Appearance &amp; Self-Management Planning.pdf" />
+    <Content Include="data\therapy_corpus\Module 8 - Challenging Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Module 9 - Strengthening New Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 01 - What is Panic.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 02 - Biology and Psychology of Panic.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 03 - The Vicious Cycle of Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 04 - Breathing Retraining.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 05 - Progressive Muscle Relaxation.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 06 - Behavioural Experiments for Negative Predictions.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 07 - Situational Exposure.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 08 - Physical Symptons and Panic.pdf" />
+    <Content Include="data\therapy_corpus\Panic Information Sheet - 09-What are Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 01 - What is Perfectionism.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 02 - Understanding Perfectionism.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 03 - What keeps perfectionism going.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 04 - Changing Perfectionism.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 05 - Reducing my Perfectionist Behaviour...pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 06 - Challenging my perfectionistic thinking.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 07 - Adjusting unhelpful rules and assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 08 - Re-evaluating the importance of achieving.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism in Perspective - 09 - Putting it all together.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 01 - What is Perfectionism.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 02 - What Maintains Perfectionism.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 03 - Perfectionism Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 04 - Challenging Perfectionistic Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 05 - Perfectionism Rules and Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Perfectionism Information Sheet - 06 - Re-Evaluating the Importance of Achieving.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 01 - What Is Procrastination.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 02 - Vicious Cycle of Procrastination.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 03 - Dismissing Procrastination Excuses.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 04 - Practical Strategies.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 05 - Unhelpful Rules and Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 06 - Procrastination and Tolerating Discomfort.pdf" />
+    <Content Include="data\therapy_corpus\Procrastination Information Sheet - 07 - Procrastination Action Plan.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 01 - Understanding Procrastination Part 1.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 02 - Understanding Procrastination Part 2.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 03 - Changing Procrastination.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 04 - Dismissing Procrastination Excuses.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 05 - Practical Techniques to stop Procrastination.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 06 - Adjusting Unhelpful Rules Assumptions and Tolerating Discomfort.pdf" />
+    <Content Include="data\therapy_corpus\Putting Off Procrastinating - 07 - Putting It Altogether, Doing It &amp; Keeping Going.pdf" />
+    <Content Include="data\therapy_corpus\seed_corpus.json" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 01 - What is Low Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 02 - Beginnings of Low Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 03 - What Maintains Low Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 04 - Acknowledging Your Positives.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 05 - Negative Self-Evaluations.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 06 - Adjusting Negative Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 07 - Adjusting Rules and Assumptions.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 08 - Overcoming Biased Expectations.pdf" />
+    <Content Include="data\therapy_corpus\Self-Esteem Information Sheet - 09 - Healthy Self-Esteem.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 01 - Facts About Sleep.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 02 - What is Insomnia.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 03 - Insomnia and Your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 04 - Sleep Hygiene.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 05 - Nightmares explained.pdf" />
+    <Content Include="data\therapy_corpus\Sleep Information Sheet - 06 - Imagery Rescripting.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 01 - What is Social Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 02 - What can be done about Social Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 03 - Breathing Retraining.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 04 - Progressive Muscle Relaxation.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 05 - Improving How you Feel.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 06 - Thinking and Feeling.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 07 - Analysing your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 08 - Challenging your Thinking.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 09 - Unhelpful Thinking Styles.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 10 - What are Core Beliefs.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 11 - Situational Exposure.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 12-What are Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\Social Anxiety Information Sheet - 13 - Staying Healthy.pdf" />
+    <Content Include="data\therapy_corpus\What is Body Dysmorphic Disorder.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 01 - Overview of Generalised Anxiety.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 02 - Overview of Worry.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 03 - Negative Beliefs About Worry %28Uncontrollability%29.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 04 - Attention Training.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 05 - Negative Beliefs About Worry %28Danger%29.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 06 - Positive Beliefs About Worrying.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 07 - Problem-Solving.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 08 - Helpful Thinking.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 09 - Accepting Uncertainty.pdf" />
+    <Content Include="data\therapy_corpus\What Me Worry - 10 - Self-Management.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 1 - Overview of Panic.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 2 - What Keeps Panic Disorder Going.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 3 - Overcoming Thoughts about Panic.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 4 - Coping with Physical Alarms.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 5 - Facing Feared Situations.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 6 - Dropping Safety Behaviours.pdf" />
+    <Content Include="data\therapy_corpus\When Panic Attacks - Module 7 - Maintaining Your Gains.pdf" />
+    <Content Include="frontend\package.json" />
+    <Content Include="frontend\public\audio\background_music.mp3" />
+    <Content Include="frontend\public\favicon.ico" />
+    <Content Include="frontend\public\index.html" />
+    <Content Include="frontend\public\manifest.json" />
+    <Content Include="frontend\public\Robots.txt" />
+    <Content Include="frontend\src\App.css" />
+    <Content Include="frontend\src\App.jsx" />
+    <Content Include="frontend\src\components\Auth\Auth.css" />
+    <Content Include="frontend\src\components\Auth\Login.jsx" />
+    <Content Include="frontend\src\components\Auth\Signup.jsx" />
+    <Content Include="frontend\src\components\Calendar\EmotionCalendar.css" />
+    <Content Include="frontend\src\components\Calendar\EmotionCalendar.jsx" />
+    <Content Include="frontend\src\components\Chatbot\Chatbot.css" />
+    <Content Include="frontend\src\components\Chatbot\Chatbot.jsx" />
+    <Content Include="frontend\src\components\Diary\Diary.css" />
+    <Content Include="frontend\src\components\Diary\DiaryEditor.jsx" />
+    <Content Include="frontend\src\components\Diary\EmotionResult.jsx" />
+    <Content Include="frontend\src\components\History\DiaryHistory.css" />
+    <Content Include="frontend\src\components\History\DiaryHistory.jsx" />
+    <Content Include="frontend\src\components\Layout\NavBar.css" />
+    <Content Include="frontend\src\components\Layout\NavBar.jsx" />
+    <Content Include="frontend\src\context\AuthContext.jsx" />
+    <Content Include="frontend\src\index.css" />
+    <Content Include="frontend\src\index.js" />
+    <Content Include="frontend\src\pages\AuthPage.css" />
+    <Content Include="frontend\src\pages\AuthPage.jsx" />
+    <Content Include="frontend\src\pages\CalendarPage.jsx" />
+    <Content Include="frontend\src\pages\ChatBotPage.css" />
+    <Content Include="frontend\src\pages\ChatBotPage.jsx" />
+    <Content Include="frontend\src\pages\DiaryPage.jsx" />
+    <Content Include="frontend\src\pages\HistoryPage.jsx" />
+    <Content Include="frontend\src\services\api.js" />
+    <Content Include="frontend\src\styles\theme.js" />
+    <Content Include="README.md" />
+    <Content Include="requirements.txt" />
+    <Content Include="test_prompt.json" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

@@ -1,0 +1,247 @@
+.diary-editor-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.diary-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.editor-header {
+    border-bottom: 2px solid #E8F2F7;
+    padding-bottom: 16px;
+}
+
+    .editor-header h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 28px;
+        color: #2C3E50;
+        margin-bottom: 4px;
+    }
+
+.date-display {
+    color: #5A6C7D;
+    font-size: 14px;
+}
+
+.diary-textarea {
+    width: 100%;
+    min-height: 400px;
+    padding: 20px;
+    border: 2px solid #D4E4F0;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+    .diary-textarea:focus {
+        outline: none;
+        border-color: #6B9DC9;
+        box-shadow: 0 0 0 3px rgba(107, 157, 201, 0.1);
+    }
+
+.editor-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.emotion-result {
+    background: linear-gradient(135deg, #FFFFFF 0%, #F5F9FC 100%);
+}
+
+.result-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color: #2C3E50;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.emotion-score-container {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: white;
+    border-radius: 16px;
+}
+
+.score-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.score-inner {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(107, 157, 201, 0.15);
+}
+
+.score-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: #6B9DC9;
+    font-family: 'Poppins', sans-serif;
+}
+
+.score-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #5A6C7D;
+    margin-top: -4px;
+}
+
+.score-description {
+    flex: 1;
+}
+
+    .score-description p {
+        font-size: 18px;
+        color: #2C3E50;
+        margin-bottom: 16px;
+        font-weight: 500;
+    }
+
+. score-scale {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: #5A6C7D;
+}
+
+.top-emotions h4 {
+    font-size: 18px;
+    color: #2C3E50;
+    margin-bottom: 16px;
+}
+
+.emotions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.emotion-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(107, 157, 201, 0.08);
+    transition: all 0.3s ease;
+}
+
+    .emotion-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 16px rgba(107, 157, 201, 0.16);
+    }
+
+.emotion-rank {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    background: #6B9DC9;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.emotion-emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.emotion-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.emotion-confidence {
+    font-size: 13px;
+    color: #5A6C7D;
+    margin-bottom: 12px;
+}
+
+.emotion-bar {
+    height: 6px;
+    background: #E8F2F7;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.emotion-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.analysis-timestamp {
+    text-align: center;
+    color: #8499AA;
+    font-size: 13px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #E8F2F7;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .emotions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .emotion-score-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}

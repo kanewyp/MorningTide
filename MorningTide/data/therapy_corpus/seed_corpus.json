@@ -1,0 +1,448 @@
+{
+  "corpus_version": "1.0",
+  "corpus_date": "2026-01-16",
+  "description": "Curated mental health therapy discussion topics and prompts for MorningTide RAG",
+  "topics": [
+    {
+      "id": "anxiety_001",
+      "category": "Anxiety Management",
+      "title": "Understanding Anxiety Triggers",
+      "content": "Anxiety often stems from identifiable triggers��situations, thoughts, or physical sensations that activate the fight-or-flight response.  Recognizing patterns in when anxiety occurs can help you develop targeted coping strategies.  In therapy, we can explore your specific triggers and build a personalized toolkit of grounding techniques.",
+      "keywords": [ "anxiety", "triggers", "coping", "grounding", "patterns" ],
+      "difficulty": "beginner",
+      "related_topics": [ "anxiety_002", "anxiety_003" ]
+    },
+    {
+      "id": "anxiety_002",
+      "category": "Anxiety Management",
+      "title": "Grounding Techniques for Panic Attacks",
+      "content": "The 5-4-3-2-1 technique (5 things you see, 4 you can touch, 3 you hear, 2 you smell, 1 you taste) is an evidence-based grounding method that redirects attention from anxious thoughts to sensory experience.  Practicing this during calm moments prepares you to use it effectively during a panic response.",
+      "keywords": [ "panic", "grounding", "5-4-3-2-1", "sensory", "coping" ],
+      "difficulty": "beginner",
+      "related_topics": [ "anxiety_001", "stress_001" ]
+    },
+    {
+      "id": "anxiety_003",
+      "category": "Anxiety Management",
+      "title": "Cognitive Restructuring for Worry",
+      "content": "Worry often involves catastrophic thinking��jumping to worst-case scenarios without evidence. Cognitive restructuring helps you examine these thoughts more objectively:  What's the evidence?  What's a more balanced perspective? How have you handled similar situations before? This technique is central to cognitive-behavioral therapy.",
+      "keywords": [ "worry", "catastrophic thinking", "cognitive restructuring", "CBT", "evidence" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "anxiety_001", "depression_001" ]
+    },
+    {
+      "id": "depression_001",
+      "category": "Depression & Mood",
+      "title": "Breaking the Negative Thought Cycle",
+      "content": "Depression often maintains itself through rumination��repetitive negative thoughts that reinforce low mood. Cognitive behavioral therapy (CBT) techniques like thought stopping and cognitive reframing can help interrupt this cycle.  We can work together to identify your most frequent negative thoughts and develop counter-statements.",
+      "keywords": [ "depression", "rumination", "negative thoughts", "CBT", "reframing" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "anxiety_003", "depression_002" ]
+    },
+    {
+      "id": "depression_002",
+      "category": "Depression & Mood",
+      "title": "Behavioral Activation:  Moving Through Low Mood",
+      "content": "When depressed, motivation often decreases��we withdraw, avoid activities, and this avoidance deepens depression. Behavioral activation involves scheduling small, achievable activities (even if you don't feel like it) to gradually rebuild momentum and mood. Small wins compound over time.",
+      "keywords": [ "depression", "behavioral activation", "motivation", "withdrawal", "activity" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "depression_001", "sleep_001" ]
+    },
+    {
+      "id": "depression_003",
+      "category": "Depression & Mood",
+      "title": "Self-Compassion During Difficult Seasons",
+      "content": "Depression can trigger intense self-criticism.  Practicing self-compassion��treating yourself with the same kindness you'd offer a close friend��is both scientifically supported and therapeutically powerful. This doesn't mean ignoring problems, but approaching them from a place of care rather than shame.",
+      "keywords": [ "depression", "self-compassion", "shame", "self-criticism", "kindness" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "depression_001", "identity_001" ]
+    },
+    {
+      "id": "stress_001",
+      "category": "Stress Management",
+      "title": "Recognizing Chronic Stress vs. Acute Stress",
+      "content": "Acute stress (a deadline, conflict) activates your fight-or-flight system temporarily. Chronic stress (prolonged pressure, uncertainty) keeps your nervous system in a heightened state, leading to burnout and health issues. Understanding which type you're experiencing helps tailor coping strategies appropriately.",
+      "keywords": [ "stress", "chronic", "acute", "nervous system", "burnout" ],
+      "difficulty": "beginner",
+      "related_topics": [ "anxiety_001", "sleep_001" ]
+    },
+    {
+      "id": "stress_002",
+      "category": "Stress Management",
+      "title": "Boundaries: Saying No Without Guilt",
+      "content": "Healthy boundaries protect your mental and emotional energy. Learning to say no��to extra work, unreasonable requests, or situations that drain you��is not selfish; it's essential. We can practice assertive communication and examine beliefs that make boundary-setting difficult.",
+      "keywords": [ "boundaries", "assertiveness", "saying no", "guilt", "energy" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "relationships_001", "identity_001" ]
+    },
+    {
+      "id": "sleep_001",
+      "category": "Sleep & Physical Wellness",
+      "title": "Sleep Hygiene and Restorative Rest",
+      "content": "Quality sleep is foundational to mental health.  Sleep hygiene includes consistent sleep schedules, a cool dark environment, limiting screens before bed, and managing caffeine and alcohol. When sleep improves, mood, anxiety, and cognitive function often follow.",
+      "keywords": [ "sleep", "hygiene", "rest", "circadian rhythm", "insomnia" ],
+      "difficulty": "beginner",
+      "related_topics": [ "stress_001", "anxiety_001" ]
+    },
+    {
+      "id": "sleep_002",
+      "category": "Sleep & Physical Wellness",
+      "title": "The Gut-Brain Connection and Mood",
+      "content": "Emerging research shows strong links between gut health and mental health. Nutrition, gut microbiome, and digestive health influence mood and anxiety. Even small improvements in diet and digestion can positively impact your emotional well-being.",
+      "keywords": [ "sleep", "gut health", "nutrition", "microbiome", "physical wellness" ],
+      "difficulty": "beginner",
+      "related_topics": [ "sleep_001", "exercise_001" ]
+    },
+    {
+      "id": "exercise_001",
+      "category": "Physical Activity & Wellness",
+      "title": "Movement as Medicine: Exercise for Mental Health",
+      "content": "Exercise is one of the most evidence-based interventions for anxiety and depression. Even 20-30 minutes of moderate activity releases endorphins, reduces stress hormones, and improves mood. The key is finding movement you enjoy so it becomes sustainable.",
+      "keywords": [ "exercise", "movement", "endorphins", "mental health", "activity" ],
+      "difficulty": "beginner",
+      "related_topics": [ "depression_002", "sleep_001" ]
+    },
+    {
+      "id": "exercise_002",
+      "category": "Physical Activity & Wellness",
+      "title": "Building a Sustainable Wellness Routine",
+      "content": "Sustainable wellness isn't about perfection��it's about consistency and self-compassion. Start small (one new habit), track what works, and gradually build.  Combining exercise, nutrition, sleep, and stress management creates a powerful foundation for mental health.",
+      "keywords": [ "wellness", "routine", "sustainability", "habits", "self-care" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "exercise_001", "stress_002" ]
+    },
+    {
+      "id": "relationships_001",
+      "category": "Relationships & Connection",
+      "title": "Healthy Communication in Relationships",
+      "content": "Many mental health struggles involve relationship challenges. Healthy communication means expressing needs clearly, listening actively, and managing conflict constructively. Therapy can help you develop skills to deepen connections and resolve conflicts more effectively.",
+      "keywords": [ "relationships", "communication", "conflict", "connection", "assertiveness" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "stress_002", "identity_001" ]
+    },
+    {
+      "id": "relationships_002",
+      "category": "Relationships & Connection",
+      "title": "Setting Boundaries with Family",
+      "content": "Family relationships carry unique dynamics and history. Setting boundaries with family��while maintaining connection��requires courage and clarity. We can explore family patterns and practice communication that honors both your needs and your relationships.",
+      "keywords": [ "family", "boundaries", "patterns", "communication", "connection" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "stress_002", "relationships_001" ]
+    },
+    {
+      "id": "relationships_003",
+      "category": "Relationships & Connection",
+      "title": "Building Loneliness Resistance Through Connection",
+      "content": "Loneliness affects mental health significantly. Building resilience against loneliness involves both deepening existing relationships and developing self-compassion for alone time. We can work on increasing meaningful connection while reducing isolation.",
+      "keywords": [ "loneliness", "isolation", "connection", "community", "belonging" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "depression_001", "relationships_001" ]
+    },
+    {
+      "id": "identity_001",
+      "category": "Identity & Self-Exploration",
+      "title": "Understanding Your Core Values",
+      "content": "Many mental health struggles involve living misaligned with your values. Clarifying what truly matters to you��not what others expect��creates direction and meaning. Values-based living is more fulfilling than goal-chasing alone.",
+      "keywords": [ "values", "identity", "meaning", "purpose", "alignment" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_002", "stress_002" ]
+    },
+    {
+      "id": "identity_002",
+      "category": "Identity & Self-Exploration",
+      "title": "Imposter Syndrome and Self-Doubt",
+      "content": "Imposter syndrome��feeling like a fraud despite evidence of competence��is common, especially among high-achievers. It's rooted in perfectionism and comparing your internal experience to others' external successes. Recognizing this pattern is the first step to changing it.",
+      "keywords": [ "imposter syndrome", "self-doubt", "perfectionism", "achievement", "competence" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_001", "anxiety_001" ]
+    },
+    {
+      "id": "identity_003",
+      "category": "Identity & Self-Exploration",
+      "title": "Authenticity:  Living True to Yourself",
+      "content": "Suppressing your authentic self to meet others' expectations creates internal conflict and anxiety. Therapy can help you identify where you're living inauthentically and gradually express your true self��starting with trusted people and safe contexts.",
+      "keywords": [ "authenticity", "self-expression", "vulnerability", "identity", "truth" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_001", "relationships_001" ]
+    },
+    {
+      "id": "trauma_001",
+      "category": "Trauma & Recovery",
+      "title": "Understanding the Trauma Response",
+      "content": "Trauma changes how your nervous system processes threat. Hypervigilance, flashbacks, and emotional dysregulation are survival responses, not character flaws. Trauma-informed therapy helps your nervous system recalibrate toward safety and healing.",
+      "keywords": [ "trauma", "nervous system", "hypervigilance", "flashback", "recovery" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "trauma_002", "anxiety_001" ]
+    },
+    {
+      "id": "trauma_002",
+      "category": "Trauma & Recovery",
+      "title": "Somatic Approaches to Trauma Healing",
+      "content": "Trauma is stored in the body, not just the mind. Somatic therapies��including body-based techniques like progressive muscle relaxation, breathing work, and movement��help process and release trauma physically, complementing talk therapy.",
+      "keywords": [ "trauma", "somatic", "body", "nervous system", "healing" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "trauma_001", "anxiety_002" ]
+    },
+    {
+      "id": "trauma_003",
+      "category": "Trauma & Recovery",
+      "title": "Complex Trauma and Long-Term Recovery",
+      "content": "Complex trauma (repeated or prolonged trauma, especially in childhood) affects self-concept, relationships, and emotion regulation deeply. Recovery is gradual and often requires specialized trauma therapy, but lasting healing is possible.",
+      "keywords": [ "complex trauma", "CPTSD", "recovery", "relationships", "self-concept" ],
+      "difficulty": "advanced",
+      "related_topics": [ "trauma_001", "relationships_001" ]
+    },
+    {
+      "id": "emotion_001",
+      "category": "Emotion Regulation",
+      "title": "Understanding Your Emotional Palette",
+      "content": "Many people can name only a few emotions (happy, sad, angry). Developing emotional literacy��recognizing subtle emotional states��helps you respond more effectively.  A richer emotional vocabulary enables more nuanced self-understanding and communication.",
+      "keywords": [ "emotions", "emotional literacy", "awareness", "recognition", "vocabulary" ],
+      "difficulty": "beginner",
+      "related_topics": [ "emotion_002", "relationships_001" ]
+    },
+    {
+      "id": "emotion_002",
+      "category": "Emotion Regulation",
+      "title": "DBT Skills:  Mindfulness and Distress Tolerance",
+      "content": "Dialectical Behavior Therapy (DBT) teaches skills for intense emotions:  mindfulness (observing without judgment), distress tolerance (surviving crisis without making it worse), and emotion regulation (changing emotional states). These skills are empirically validated and highly practical.",
+      "keywords": [ "DBT", "mindfulness", "distress tolerance", "emotion regulation", "skills" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "emotion_001", "anxiety_002" ]
+    },
+    {
+      "id": "emotion_003",
+      "category": "Emotion Regulation",
+      "title": "The Window of Tolerance and Nervous System States",
+      "content": "Your nervous system has a 'window of tolerance'��a zone of optimal arousal where you think and feel clearly. Outside this window, you're either hyperaroused (anxious, reactive) or hypoaroused (numb, dissociated). Therapy helps you recognize your window and return to it.",
+      "keywords": [ "nervous system", "window of tolerance", "hyperarousal", "hypoarousal", "arousal" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "emotion_002", "trauma_001" ]
+    },
+    {
+      "id": "mindfulness_001",
+      "category": "Mindfulness & Meditation",
+      "title": "Introduction to Mindfulness Meditation",
+      "content": "Mindfulness��paying attention to the present moment without judgment��is a cornerstone of many therapeutic approaches. Starting with just 5-10 minutes daily can reduce anxiety, improve focus, and create psychological distance from unhelpful thoughts.",
+      "keywords": [ "mindfulness", "meditation", "present moment", "awareness", "practice" ],
+      "difficulty": "beginner",
+      "related_topics": [ "mindfulness_002", "stress_001" ]
+    },
+    {
+      "id": "mindfulness_002",
+      "category": "Mindfulness & Meditation",
+      "title": "Loving-Kindness Meditation for Self-Compassion",
+      "content": "Loving-kindness meditation cultivates compassion for yourself and others through structured visualization and repetition of kind phrases. Research shows it reduces self-criticism and increases emotional warmth, particularly helpful for depression and shame.",
+      "keywords": [ "loving-kindness", "self-compassion", "meditation", "kindness", "shame" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "mindfulness_001", "depression_003" ]
+    },
+    {
+      "id": "mindfulness_003",
+      "category": "Mindfulness & Meditation",
+      "title": "Body Scan for Tension Release and Awareness",
+      "content": "The body scan meditation systematically moves attention through your body, noticing sensations without trying to change them. This practice increases body awareness, releases held tension, and serves as a bridge between mind and body awareness.",
+      "keywords": [ "body scan", "tension", "awareness", "relaxation", "somatic" ],
+      "difficulty": "beginner",
+      "related_topics": [ "mindfulness_001", "anxiety_002" ]
+    },
+    {
+      "id": "addiction_001",
+      "category": "Substance Use & Addiction",
+      "title": "Understanding Addiction as a Symptom",
+      "content": "Addiction often develops as a coping mechanism for underlying pain, trauma, or mental health struggles. Understanding what need the addiction meets (escape, numbness, connection) helps identify healthier alternatives and address root causes in therapy.",
+      "keywords": [ "addiction", "coping", "substance use", "underlying causes", "recovery" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "addiction_002", "trauma_001" ]
+    },
+    {
+      "id": "addiction_002",
+      "category": "Substance Use & Addiction",
+      "title": "Relapse Prevention and Sustainable Recovery",
+      "content": "Recovery from addiction isn't linear��setbacks often happen.  Building a strong relapse prevention plan involves identifying triggers, developing alternative coping strategies, building social support, and addressing underlying mental health issues with professional help.",
+      "keywords": [ "addiction", "relapse", "recovery", "triggers", "prevention" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "addiction_001", "support_001" ]
+    },
+    {
+      "id": "motivation_001",
+      "category": "Motivation & Purpose",
+      "title": "Distinguishing Between Intrinsic and Extrinsic Motivation",
+      "content": "Intrinsic motivation (doing things because they matter to you) leads to greater fulfillment and persistence than extrinsic motivation (external rewards or pressure). When you feel unmotivated, examining whether you're pursuing others' goals or your own can be revealing.",
+      "keywords": [ "motivation", "intrinsic", "extrinsic", "purpose", "goals" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_001", "motivation_002" ]
+    },
+    {
+      "id": "motivation_002",
+      "category": "Motivation & Purpose",
+      "title": "Overcoming Perfectionism and Analysis Paralysis",
+      "content": "Perfectionism often masquerades as high standards but actually prevents progress. Analysis paralysis��endlessly preparing without acting��is a defense against failure and vulnerability. Therapy helps you embrace 'good enough' and take action despite imperfection.",
+      "keywords": [ "perfectionism", "action", "paralyzing", "progress", "vulnerability" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_002", "anxiety_001" ]
+    },
+    {
+      "id": "grief_001",
+      "category": "Loss & Grief",
+      "title": "The Grief Journey: Loss Beyond Death",
+      "content": "Grief isn't only about death��you grieve jobs, relationships, health, identity, and dreams. All losses deserve acknowledgment.  Therapy provides space to process grief at your own pace, recognize its complexity, and gradually integrate loss into your story.",
+      "keywords": [ "grief", "loss", "mourning", "bereavement", "acceptance" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "grief_002", "depression_001" ]
+    },
+    {
+      "id": "grief_002",
+      "category": "Loss & Grief",
+      "title": "Finding Meaning After Loss",
+      "content": "Over time, acute grief often transforms into meaning-making. Some people find purpose through helping others, honoring the lost person's memory, or redirecting energy toward meaningful goals. This doesn't erase the loss but weaves it into a fuller life story.",
+      "keywords": [ "grief", "meaning-making", "purpose", "memory", "integration" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "grief_001", "identity_001" ]
+    },
+    {
+      "id": "creativity_001",
+      "category": "Expression & Creativity",
+      "title": "Creative Expression as Emotional Processing",
+      "content": "Writing, art, music, and movement express what words alone cannot. Creative expression externalizes internal experiences, processes emotions, and creates distance from overwhelming feelings. You don't need to be 'artistic'��the process, not the product, heals.",
+      "keywords": [ "creativity", "expression", "art", "writing", "emotion" ],
+      "difficulty": "beginner",
+      "related_topics": [ "emotion_001", "identity_003" ]
+    },
+    {
+      "id": "creativity_002",
+      "category": "Expression & Creativity",
+      "title": "Journaling as Therapeutic Practice",
+      "content": "Structured journaling (stream of consciousness, gratitude lists, worry dumps, letter writing to unmet needs) serves multiple purposes: emotional release, perspective-taking, tracking patterns, and problem-solving. Writing rewires your brain toward resilience.",
+      "keywords": [ "journaling", "writing", "reflection", "processing", "gratitude" ],
+      "difficulty": "beginner",
+      "related_topics": [ "mindfulness_001", "creativity_001" ]
+    },
+    {
+      "id": "support_001",
+      "category": "Support Systems & Help-Seeking",
+      "title": "Building a Sustainable Support Network",
+      "content": "Mental health improves with connection. Building a support network includes family, friends, therapy, support groups, mentors, and community.  Diversifying your support��rather than relying on one person��creates resilience and prevents burnout in relationships.",
+      "keywords": [ "support", "network", "connection", "community", "resilience" ],
+      "difficulty": "beginner",
+      "related_topics": [ "relationships_001", "support_002" ]
+    },
+    {
+      "id": "support_002",
+      "category": "Support Systems & Help-Seeking",
+      "title": "When and How to Ask for Help",
+      "content": "Asking for help is a strength, not a weakness. Barriers to help-seeking (shame, pride, distrust, uncertainty) can be explored in therapy. Learning to articulate needs and accept support deepens relationships and accelerates healing.",
+      "keywords": [ "help-seeking", "vulnerability", "connection", "asking", "support" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "support_001", "identity_003" ]
+    },
+    {
+      "id": "acceptance_001",
+      "category": "Acceptance & Change",
+      "title": "Acceptance and Commitment Therapy (ACT) Basics",
+      "content": "ACT teaches that suffering comes not from feelings themselves but from resistance to them. Acceptance (feeling feelings without fighting them) combined with committed action (living according to values) creates psychological flexibility and reduces suffering.",
+      "keywords": [ "acceptance", "ACT", "values", "commitment", "psychological flexibility" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "emotion_002", "identity_001" ]
+    },
+    {
+      "id": "acceptance_002",
+      "category": "Acceptance & Change",
+      "title": "The Paradox of Change:  Accept First, Then Change",
+      "content": "Counterintuitively, accepting your current reality (not fighting what is) often enables change more than resistance does. Acceptance creates internal space for growth; rejection and self-judgment create rigidity. In therapy, we work with this paradox.",
+      "keywords": [ "acceptance", "change", "paradox", "growth", "resistance" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "acceptance_001", "depression_003" ]
+    },
+    {
+      "id": "performance_001",
+      "category": "Performance & Pressure",
+      "title": "Managing Performance Anxiety",
+      "content": "Performance anxiety (before presentations, tests, performances) involves fear of judgment.  Techniques include systematic desensitization, cognitive reframing, breathing work, and exposure.  We can identify your specific anxiety triggers and build personalized coping strategies.",
+      "keywords": [ "performance anxiety", "public speaking", "test anxiety", "pressure", "fear" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "anxiety_001", "identity_002" ]
+    },
+    {
+      "id": "performance_002",
+      "category": "Performance & Pressure",
+      "title": "Resilience Under Pressure and Stress Inoculation",
+      "content": "Resilience isn't about never struggling��it's about recovering from setbacks.  Stress inoculation training exposes you to manageable stress in controlled settings to build confidence and coping skills. This translates to greater resilience under real-world pressure.",
+      "keywords": [ "resilience", "pressure", "stress inoculation", "coping", "recovery" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "performance_001", "stress_001" ]
+    },
+    {
+      "id": "health_001",
+      "category": "Health Anxiety & Somatic Concerns",
+      "title": "Understanding Health Anxiety",
+      "content": "Health anxiety (hypochondriasis) involves disproportionate worry about illness despite medical reassurance. It often stems from anxiety disorder or past trauma. Cognitive-behavioral approaches help distinguish real symptoms from anxiety amplification.",
+      "keywords": [ "health anxiety", "worry", "somatic", "symptoms", "medical" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "anxiety_001", "health_002" ]
+    },
+    {
+      "id": "health_002",
+      "category": "Health Anxiety & Somatic Concerns",
+      "title": "The Mind-Body Connection in Healing",
+      "content": "Stress and anxiety manifest physically (tension, pain, fatigue). Conversely, physical self-care (movement, nutrition, sleep) impacts mental health. Addressing both domains��mental and physical��creates faster, more sustainable healing.",
+      "keywords": [ "mind-body", "psychosomatic", "healing", "stress", "physical" ],
+      "difficulty": "beginner",
+      "related_topics": [ "sleep_001", "exercise_001" ]
+    },
+    {
+      "id": "work_001",
+      "category": "Work & Career",
+      "title": "Work-Life Balance and Burnout Prevention",
+      "content": "Burnout results from chronic work stress without adequate recovery. Prevention involves setting boundaries, taking breaks, pursuing meaningful work, and maintaining life outside work. If burnout occurs, professional support can help you rebuild and reassess career alignment.",
+      "keywords": [ "burnout", "work-life balance", "boundaries", "stress", "career" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "stress_002", "identity_001" ]
+    },
+    {
+      "id": "work_002",
+      "category": "Work & Career",
+      "title": "Career Transitions and Identity",
+      "content": "Career changes trigger identity questions:  Who am I if not in this role? What do I actually want?  Career transitions are also mental health opportunities to align work with values and priorities. Therapy can support you through uncertainty and self-discovery.",
+      "keywords": [ "career", "transitions", "identity", "change", "purpose" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_001", "work_001" ]
+    },
+    {
+      "id": "aging_001",
+      "category": "Life Stages & Transitions",
+      "title": "Navigating Major Life Transitions",
+      "content": "Major transitions (graduation, career changes, moving, parenthood, retirement) disrupt identity and routine, often triggering anxiety or depression. These are also opportunities to reassess and intentionally create the life you want.  Therapy supports navigation of change.",
+      "keywords": [ "transitions", "change", "life stages", "identity", "adjustment" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "aging_002", "identity_001" ]
+    },
+    {
+      "id": "aging_002",
+      "category": "Life Stages & Transitions",
+      "title": "Aging Gracefully:  Acceptance and Growth",
+      "content": "Aging brings physical changes and mortality awareness��sources of anxiety for many. Acceptance of aging as a natural process, gratitude for experiences, and finding meaning in this stage supports psychological well-being. Therapy helps process fears and find purpose.",
+      "keywords": [ "aging", "mortality", "acceptance", "purpose", "life stages" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "aging_001", "acceptance_001" ]
+    },
+    {
+      "id": "spirituality_001",
+      "category": "Spirituality & Meaning",
+      "title": "Spirituality, Religion, and Mental Health",
+      "content": "Spirituality and religion can be sources of deep meaning, community, and comfort��or sources of shame, guilt, and conflict. Therapy honors your spiritual beliefs while examining whether they support your mental health or constrain it.",
+      "keywords": [ "spirituality", "religion", "meaning", "faith", "values" ],
+      "difficulty": "intermediate",
+      "related_topics": [ "identity_001", "spirituality_002" ]
+    },
+    {
+      "id": "spirituality_002",
+      "category": "Spirituality & Meaning",
+      "title": "Finding Meaning and Purpose in Life",
+      "content": "Existential questions��Why am I here? What matters? ��surface in therapy, especially during crisis or transition. Exploring these questions helps you clarify values, live authentically, and find meaning.  This search for purpose is central to mental well-being.",
+      "keywords": [ "meaning", "purpose", "existential", "values", "authenticity" ],
+      "difficulty": "advanced",
+      "related_topics": [ "identity_001", "motivation_001" ]
+    }
+  ]
+}

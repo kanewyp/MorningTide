@@ -1,0 +1,370 @@
+.history-container {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Sidebar + Main content */
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    height: calc(100vh - 120px); /* Full height minus navbar */
+}
+
+.history-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden; /* Prevent whole card from scrolling */
+}
+
+. sidebar-header {
+    border-bottom: 2px solid #E8F2F7;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+}
+
+    .sidebar-header h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 24px;
+        color: #2C3E50;
+        margin-bottom: 16px;
+    }
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: #F5F9FC;
+    border-radius: 10px;
+    border: 2px solid #D4E4F0;
+    transition: all 0.3s ease;
+}
+
+    .search-box:focus-within {
+        border-color: #6B9DC9;
+        background: white;
+    }
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    color: #2C3E50;
+}
+
+.entries-list {
+    flex: 1; /* Take remaining space */
+    overflow-y: auto; /* Scrollable */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.entry-item {
+    padding: 16px;
+    background: #F5F9FC;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+    .entry-item:hover {
+        background: #EBF4FA;
+        border-color: #A8C9E8;
+    }
+
+    .entry-item.selected {
+        background: linear-gradient(135deg, #6B9DC9 0%, #89B5D9 100%);
+        color: white;
+        border-color: #6B9DC9;
+    }
+
+.entry-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.entry-item. selected .entry-item-header,
+.entry-item.selected . entry-preview {
+    color: white;
+}
+
+.entry-preview {
+    font-size: 14px;
+    color: #5A6C7D;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.entry-score-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.score-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.history-detail {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.detail-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-header {
+    border-bottom: 2px solid #E8F2F7;
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+}
+
+    .detail-header h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 28px;
+        color: #2C3E50;
+        margin-bottom: 8px;
+    }
+
+.detail-time {
+    font-size: 14px;
+    color: #8499AA;
+}
+
+.detail-body {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.diary-content h3,
+.detail-analysis h3 {
+    font-size: 18px;
+    color: #2C3E50;
+    margin-bottom: 16px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.diary-content p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #2C3E50;
+    white-space: pre-wrap; /* Preserve line breaks */
+}
+
+.detail-analysis {
+    background: #F5F9FC;
+    padding: 24px;
+    border-radius: 12px;
+}
+
+.analysis-score {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+}
+
+.score-circle-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    font-weight: 700;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 4px 16px rgba(107, 157, 201, 0.2);
+}
+
+.score-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.score-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2C3E50;
+}
+
+. score-description {
+    font-size: 14px;
+    color: #5A6C7D;
+}
+
+.detail-emotions h4 {
+    font-size: 16px;
+    color: #2C3E50;
+    margin-bottom: 12px;
+}
+
+.detail-emotion-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.emotion-rank-badge {
+    width: 32px;
+    height: 32px;
+    background: #6B9DC9;
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.emotion-details {
+    flex: 1;
+}
+
+.emotion-name {
+    display: block;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    text-transform: capitalize;
+}
+
+.emotion-bar-container {
+    height: 8px;
+    background: #E8F2F7;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.emotion-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+.emotion-percentage {
+    font-weight: 600;
+    color: #5A6C7D;
+    font-size: 14px;
+}
+
+.no-analysis {
+    background: #F5F9FC;
+    padding: 48px 24px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+    .no-analysis p {
+        color: #5A6C7D;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+.hint {
+    color: #8499AA;
+    font-size: 14px;
+}
+
+.detail-empty {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.empty-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    opacity: 0.5;
+}
+
+.detail-empty h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color: #2C3E50;
+    margin-bottom: 12px;
+}
+
+.detail-empty p {
+    color: #8499AA;
+    font-size: 16px;
+}
+
+.loading-state,
+.empty-state {
+    padding: 48px 24px;
+    text-align: center;
+    color: #8499AA;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .history-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .history-sidebar {
+        height: 400px;
+    }
+}
+
+/* Delete Button */
+.btn-delete {
+    position: absolute; /* Absolute positioning to place it in the top-right corner */
+    top: 16px; /* Spacing from the top */
+    right: 16px; /* Spacing from the right */
+    padding: 6px 12px; /* Reduced padding to make it smaller */
+    background: linear-gradient(135deg, #F44336 0%, #E53935 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px; /* Smaller font size */
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+    .btn-delete:hover:not(:disabled) {
+        background: linear-gradient(135deg, #E53935 0%, #D32F2F 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+    }
+
+    .btn-delete:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+/* Ensure the parent container has relative positioning */
+.detail-content {
+    position: relative; /* Required for absolute positioning of the delete button */
+}
