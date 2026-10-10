@@ -1,6 +1,4 @@
 """
-ML module for emotion classification
+ML package. Submodules are imported explicitly (e.g. app.ml.inference) so that
+importing app.ml.rag does not require the emotion model checkpoint.
 """
-from app.ml.inference import EmotionClassifier
-
-__all__ = ["EmotionClassifier"]
