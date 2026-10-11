@@ -8,6 +8,7 @@ import logging
 from typing import List, Dict, Tuple
 from . embedding import SentenceTransformerEmbedder
 from .vector_store import FAISSVectorStore
+from .reranker import TherapyReranker
 
 
 logger = logging.getLogger(__name__)
@@ -30,6 +31,19 @@ class TherapyRetriever:
         """
         self. embedder = embedder
         self.vector_store = vector_store
+        self.reranker = TherapyReranker()
+
+    def retrieve_candidates(self, query: str, k: int = 20) -> List[Dict]:
+        """Fetch a broad semantic candidate set for later ranking."""
+        if not query.strip() or self.vector_store.index.ntotal == 0:
+            return []
+
+        query_embedding = self.embedder.embed_query(query)
+        results = self.vector_store.search(query_embedding, k=k)
+        return [
+            {**document, "similarity_score": float(score)}
+            for document, score in results
+        ]
 
     def retrieve(
         self,
@@ -46,28 +60,11 @@ class TherapyRetriever:
         Returns:
             List of relevant therapy topic documents
         """
-        if self.vector_store.index. ntotal == 0:
-            logger.warning("Vector store is empty, returning empty results")
-            return []
-
         try:
-            # Embed query
-            query_embedding = self. embedder.embed_query(query)
-
-            # Search
-            results = self.vector_store.search(query_embedding, k=k)
-
-            # Format results
-            documents = [
-                {
-                    **doc,
-                    "similarity_score": float(similarity)
-                }
-                for doc, similarity in results
-            ]
-
+            candidates = self.retrieve_candidates(query, k=max(k * 4, k))
+            documents = self.reranker.rerank(candidates, query, [], k)
             logger.debug(
-                f"Retrieved {len(documents)} documents for query:  {query[: 50]}..."
+                f"Retrieved {len(documents)} documents for query: {query[:50]}..."
             )
             return documents
 
@@ -93,7 +90,7 @@ class TherapyRetriever:
         all_results = {}
 
         for keyword in keywords:
-            results = self.retrieve(keyword, k=k)
+            results = self.retrieve_candidates(keyword, k=k)
             for doc in results:
                 doc_id = doc. get("id", "")
                 if doc_id not in all_results: 
@@ -105,10 +102,9 @@ class TherapyRetriever:
                         doc. get("similarity_score", 0)
                     )
 
-        # Sort by similarity and return top k
-        sorted_results = sorted(
-            all_results.values(),
-            key=lambda x:  x.get("similarity_score", 0),
-            reverse=True
+        return self.reranker.rerank(
+            list(all_results.values()),
+            " ".join(keywords),
+            keywords,
+            k,
         )
-        return sorted_results[:k]

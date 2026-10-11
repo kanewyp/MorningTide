@@ -61,7 +61,7 @@
     position: relative;
 }
 
-    .nav-item: hover {
+    .nav-item:hover {
         background: #EBF4FA;
         color: #4A7BA7;
     }
@@ -122,7 +122,7 @@
         margin-top: 16px;
     }
 
-    . nav-item span {
+    .nav-item span {
         display: none;
     }
 }

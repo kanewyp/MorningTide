@@ -1,4 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
+import { journalAPI, ragAPI } from '../../services/api';
 import './Chatbot.css';
 
 const Chatbot = () => {
@@ -13,8 +14,9 @@ const Chatbot = () => {
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [diaryEntries, setDiaryEntries] = useState([]);
+    const [diaryLoadError, setDiaryLoadError] = useState('');
+    const [ragStatus, setRagStatus] = useState('Checking local model...');
     const messagesEndRef = useRef(null);
-    const inputRef = useRef(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,138 +28,98 @@ const Chatbot = () => {
 
     useEffect(() => {
         fetchRecentDiaryEntries();
+        checkRagHealth();
     }, []);
 
     const fetchRecentDiaryEntries = async () => {
-        const token = localStorage.getItem('token');
-        if (!token) return;
-
-        const response = await fetch('http://localhost:8000/api/journal/entries', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            // The API returns an array directly, not { entries: [...] }
-            setDiaryEntries(Array.isArray(data) ? data : []);
+        try {
+            const response = await journalAPI.getEntries();
+            setDiaryEntries(Array.isArray(response.data) ? response.data : []);
+            setDiaryLoadError('');
+        } catch (error) {
+            setDiaryLoadError(
+                error.response?.data?.message || error.message || 'Could not load journal entries.'
+            );
         }
     };
 
-    const handleSendMessage = async (e) => {
-        e.preventDefault();
+    const checkRagHealth = async () => {
+        try {
+            const response = await ragAPI.health();
+            const generator = response.data.generator || {};
+            if (generator.status === 'healthy' && generator.model_available) {
+                setRagStatus('Local model ready');
+            } else if (generator.error) {
+                setRagStatus('Ollama offline');
+            } else {
+                setRagStatus('Configured model not found');
+            }
+        } catch (error) {
+            setRagStatus(error.response?.status === 503 ? 'RAG unavailable' : 'API unavailable');
+        }
+    };
 
-        if (!inputMessage.trim()) return;
+    const sendMessage = async (messageText) => {
+        const currentInput = messageText.trim();
+        if (!currentInput || isLoading) return;
 
         const userMessage = {
             id: Date.now(),
             type: 'user',
-            content: inputMessage,
+            content: currentInput,
             timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
-        const currentInput = inputMessage;
         setInputMessage('');
         setIsLoading(true);
-
-        const isTherapyRequest =
-            currentInput.toLowerCase().includes('suggest') ||
-            currentInput.toLowerCase().includes('therapy') ||
-            currentInput.toLowerCase().includes('discuss') ||
-            currentInput.toLowerCase().includes('session') ||
-            currentInput.toLowerCase().includes('help') ||
-            currentInput.toLowerCase().includes('analyze');
 
         if (diaryEntries.length === 0) {
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 type: 'bot',
-                content: 'I notice you haven\'t written any journal entries yet. To provide personalized therapy suggestions, I need to understand your recent thoughts and feelings. Would you like to write your first journal entry?',
+                content: diaryLoadError
+                    ? `I could not load your journal entries: ${diaryLoadError}`
+                    : 'I notice you haven\'t written any journal entries yet. Write a journal entry first and I can use it to personalize this conversation.',
                 timestamp: new Date()
             }]);
             setIsLoading(false);
             return;
         }
 
-        if (isTherapyRequest) {
-            await generateTherapySuggestions();
-        } else {
-            await retrieveTopics(currentInput);
-        }
-
+        await generateTherapySuggestions(currentInput);
         setIsLoading(false);
     };
 
-    const generateTherapySuggestions = async () => {
-        const token = localStorage.getItem('token');
+    const handleSendMessage = (event) => {
+        event.preventDefault();
+        sendMessage(inputMessage);
+    };
 
-        const response = await fetch('http://localhost:8000/api/rag/generate-suggestions', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                diary_entries: diaryEntries.map(entry => ({
+    const generateTherapySuggestions = async (question) => {
+        try {
+            const response = await ragAPI.generateSuggestions({
+                diary_entries: diaryEntries.slice(0, 10).map(entry => ({
                     date: entry.date,
                     content: entry.content
                 })),
                 top_k: 5,
-                stream: false
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.status === 'success') {
+                stream: false,
+                question,
+            });
+            const data = response.data;
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 type: 'bot',
                 content: formatTherapySuggestions(data),
                 timestamp: new Date()
             }]);
-        } else {
+        } catch (error) {
+            const message = error.response?.data?.error || error.message || 'Check that the API and Ollama are running.';
             setMessages(prev => [...prev, {
                 id: Date.now() + 1,
                 type: 'bot',
-                content: 'I\'m having trouble generating suggestions right now. Please try again in a moment.',
-                timestamp: new Date()
-            }]);
-        }
-    };
-
-    const retrieveTopics = async (query) => {
-        const token = localStorage.getItem('token');
-
-        const response = await fetch('http://localhost:8000/api/rag/retrieve-topics', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                query: query,
-                top_k: 3
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.status === 'success') {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                type: 'bot',
-                content: formatTopics(data.topics),
-                timestamp: new Date()
-            }]);
-        } else {
-            setMessages(prev => [...prev, {
-                id: Date.now() + 1,
-                type: 'bot',
-                content: 'I couldn\'t find relevant topics for your query. Could you rephrase or ask something else?',
+                content: `I could not generate a response. ${message}`,
                 timestamp: new Date()
             }]);
         }
@@ -179,26 +141,6 @@ const Chatbot = () => {
         return formatted;
     };
 
-    const formatTopics = (topics) => {
-        if (!topics || topics.length === 0) {
-            return 'I couldn\'t find specific topics related to your query, but I\'m here to help. Could you provide more details?';
-        }
-
-        let formatted = 'Here are some relevant therapy topics that might help:\n\n';
-
-        topics.forEach((topic, index) => {
-            formatted += `${index + 1}. **${topic.title || 'Untitled'}**\n`;
-            if (topic.content) {
-                formatted += `   ${topic.content.substring(0, 150)}...\n`;
-            }
-            if (topic.similarity_score) {
-                formatted += `   (Relevance: ${(topic.similarity_score * 100).toFixed(0)}%)\n\n`;
-            }
-        });
-
-        return formatted;
-    };
-
     const handleQuickAction = (action) => {
         const quickMessages = {
             suggest: 'Can you suggest discussion topics for my next therapy session?',
@@ -207,11 +149,7 @@ const Chatbot = () => {
             mood: 'How has my mood been recently?'
         };
 
-        setInputMessage(quickMessages[action]);
-
-        setTimeout(() => {
-            inputRef.current?.form.requestSubmit();
-        }, 100);
+        sendMessage(quickMessages[action]);
     };
 
     const formatTimestamp = (date) => {
@@ -232,7 +170,7 @@ const Chatbot = () => {
                         <h2>Therapy Assistant</h2>
                         <p className="status">
                             <span className="status-dot"></span>
-                            Ready to help
+                            {isLoading ? 'Preparing a response...' : diaryLoadError ? 'Journal unavailable' : ragStatus}
                         </p>
                     </div>
                 </div>
@@ -334,7 +272,6 @@ const Chatbot = () => {
             <div className="chatbot-input-container">
                 <form onSubmit={handleSendMessage} className="chatbot-input-form">
                     <input
-                        ref={inputRef}
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}

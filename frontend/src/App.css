@@ -36,7 +36,7 @@ body {
     }
 
 /* WAVE ANIMATION - creates the ocean feel */
-. wave-background {
+.wave-background {
     position: fixed; /* Stays in place when scrolling */
     top: 0;
     left: 0;
@@ -56,11 +56,11 @@ body {
     animation: wave 15s linear infinite; /* Continuous loop */
 }
 
-    . wave: nth-child(2) {
-        animation: wave 20s linear infinite; /* Different speed for depth */
-        opacity: 0.5;
-        bottom: 10px; /* Slightly offset */
-    }
+.wave:nth-child(2) {
+    animation: wave 20s linear infinite;
+    opacity: 0.5;
+    bottom: 10px;
+}
 
 /* KEYFRAMES - defines the animation steps */
 @keyframes wave {
@@ -114,9 +114,9 @@ body {
     border: 2px solid #6B9DC9;
 }
 
-    . btn-secondary:hover {
-        background: #EBF4FA; /* Subtle background on hover */
-    }
+.btn-secondary:hover {
+    background: #EBF4FA;
+}
 
 /* INPUT STYLES - consistent form inputs */
 .input {

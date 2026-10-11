@@ -14,7 +14,7 @@
     overflow: hidden; /* Prevent whole card from scrolling */
 }
 
-. sidebar-header {
+.sidebar-header {
     border-bottom: 2px solid #E8F2F7;
     padding-bottom: 16px;
     margin-bottom: 16px;
@@ -207,7 +207,7 @@
     color: #2C3E50;
 }
 
-. score-description {
+.score-description {
     font-size: 14px;
     color: #5A6C7D;
 }

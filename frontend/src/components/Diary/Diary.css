@@ -129,7 +129,7 @@
         font-weight: 500;
     }
 
-. score-scale {
+.score-scale {
     display: flex;
     flex-direction: column;
     gap: 8px;

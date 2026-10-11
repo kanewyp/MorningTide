@@ -39,7 +39,7 @@ class FAISSVectorStore:
         self. index_file = self.store_path / "therapy_index.faiss"
         self.metadata_file = self.store_path / "metadata.pkl"
 
-        self. index:  Optional[faiss.IndexFlatL2] = None
+        self. index: Optional[faiss.Index] = None
         self. metadata: List[Dict] = []
 
         self._load_or_create_index()
@@ -51,6 +51,14 @@ class FAISSVectorStore:
                 self.index = faiss.read_index(str(self.index_file))
                 with open(self.metadata_file, "rb") as f:
                     self.metadata = pickle.load(f)
+                if (
+                    self.index.d != self.dimension
+                    or self.index.ntotal != len(self.metadata)
+                    or self.index.metric_type != faiss.METRIC_INNER_PRODUCT
+                ):
+                    logger.warning("Stored index is incompatible; creating a fresh cosine index")
+                    self._create_new_index()
+                    return
                 logger.info(
                     f"✓ Loaded FAISS index with {self.index.ntotal} documents"
                 )
@@ -62,7 +70,7 @@ class FAISSVectorStore:
 
     def _create_new_index(self) -> None:
         """Create a new FAISS index."""
-        self.index = faiss.IndexFlatL2(self.dimension)
+        self.index = faiss.IndexFlatIP(self.dimension)
         self.metadata = []
         logger.info(f"✓ Created new FAISS index (dimension={self.dimension})")
 
@@ -78,14 +86,20 @@ class FAISSVectorStore:
             embeddings:  Array of shape (n_docs, dimension)
             documents: List of document metadata dictionaries
         """
-        if embeddings.shape[1] != self.dimension:
+        embeddings = np.asarray(embeddings, dtype=np.float32)
+        if embeddings.ndim != 2 or embeddings.shape[1] != self.dimension:
             raise ValueError(
-                f"Embedding dimension {embeddings.shape[1]} "
-                f"does not match index dimension {self.dimension}"
+                f"Expected embeddings shaped (n, {self.dimension}); got {embeddings.shape}"
             )
+        if len(embeddings) != len(documents):
+            raise ValueError(
+                f"Embedding count {len(embeddings)} "
+                f"does not match document count {len(documents)}"
+            )
+        if not np.isfinite(embeddings).all():
+            raise ValueError("Embeddings must contain only finite values")
 
-        # Convert to float32 (required by FAISS)
-        embeddings = embeddings.astype(np. float32)
+        faiss.normalize_L2(embeddings)
 
         # Add to index
         self.index.add(embeddings)
@@ -114,25 +128,33 @@ class FAISSVectorStore:
         Returns:
             List of (document, distance) tuples sorted by relevance
         """
-        if self.index. ntotal == 0:
+        if self.index.ntotal == 0:
             logger.warning("Vector store is empty")
             return []
 
-        # Ensure proper shape and type
-        query_embedding = query_embedding.astype(np. float32)
+        if k < 1:
+            return []
+
+        query_embedding = np.asarray(query_embedding, dtype=np.float32)
         if query_embedding.ndim == 1:
             query_embedding = query_embedding.reshape(1, -1)
+        if query_embedding.shape != (1, self.dimension):
+            raise ValueError(
+                f"Expected query embedding shaped (1, {self.dimension}); "
+                f"got {query_embedding.shape}"
+            )
+        if not np.isfinite(query_embedding).all():
+            raise ValueError("Query embedding must contain only finite values")
+        faiss.normalize_L2(query_embedding)
 
-        # Search
         distances, indices = self.index.search(query_embedding, min(k, self.index.ntotal))
 
-        # Convert distances to similarity scores (L2 distance -> similarity)
         results = []
-        for idx, distance in zip(indices[0], distances[0]):
+        for idx, cosine_score in zip(indices[0], distances[0]):
             if idx >= 0:  # Valid index
                 doc = self.metadata[idx]
-                # Convert L2 distance to similarity score (lower distance = higher similarity)
-                similarity = 1.0 / (1.0 + distance)
+                cosine_score = float(np.clip(cosine_score, -1.0, 1.0))
+                similarity = (cosine_score + 1.0) / 2.0
                 results.append((doc, similarity))
 
         return results

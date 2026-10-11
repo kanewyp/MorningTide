@@ -9,6 +9,7 @@ import logging
 from flask import Blueprint, request, jsonify
 from datetime import datetime
 from app import get_rag_pipeline
+from app.api.journal import token_required
 
 
 logger = logging.getLogger(__name__)
@@ -41,6 +42,10 @@ def validate_diary_entries(data):
         
         if not isinstance(entry['date'], str) or not isinstance(entry['content'], str):
             return False, f"Entry {i}:  'date' and 'content' must be strings"
+        if not entry['content'].strip():
+            return False, f"Entry {i}: content cannot be empty"
+        if len(entry['content']) > 20000:
+            return False, f"Entry {i}: content exceeds 20000 characters"
     
     return True, None
 
@@ -48,6 +53,7 @@ def validate_diary_entries(data):
 # ==================== Endpoints ====================
 
 @rag_bp.route('/generate-suggestions', methods=['POST'])
+@token_required
 def generate_suggestions():
     """
     Generate personalized therapy suggestions based on diary entries. 
@@ -109,30 +115,36 @@ def generate_suggestions():
         diary_entries = data.get('diary_entries', [])
         top_k = data.get('top_k', 5)
         stream = data.get('stream', False)
+        question = data.get('question', '')
         
         # Validate parameters
-        if not isinstance(top_k, int) or top_k < 1 or top_k > 20:
+        if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k < 1 or top_k > 20:
             return jsonify({
                 "status": "error",
                 "error": "top_k must be integer between 1 and 20",
                 "timestamp": datetime.now().isoformat()
             }), 400
+        if not isinstance(question, str) or len(question) > 2000:
+            return jsonify({
+                "status": "error",
+                "error": "question must be a string of at most 2000 characters",
+                "timestamp": datetime.now().isoformat()
+            }), 400
+        if not isinstance(stream, bool):
+            return jsonify({
+                "status": "error",
+                "error": "stream must be a boolean",
+                "timestamp": datetime.now().isoformat()
+            }), 400
         
         logger.info(f"Generating suggestions for {len(diary_entries)} entries")
         
-        # Update retrieval count
-        original_top_k = pipeline.top_k_retrieval
-        pipeline.top_k_retrieval = top_k
-        
-        try:
-            # Generate suggestions
-            result = pipeline.generate_suggestions(
-                diary_entries=diary_entries,
-                stream=stream
-            )
-        finally:
-            # Restore original top_k
-            pipeline.top_k_retrieval = original_top_k
+        result = pipeline.generate_suggestions(
+            diary_entries=diary_entries,
+            stream=stream,
+            top_k=top_k,
+            user_question=question,
+        )
         
         # Check for errors
         if result. get("status") == "error":
@@ -140,7 +152,7 @@ def generate_suggestions():
                 "status": "error",
                 "error": result.get('error'),
                 "timestamp": result.get('timestamp')
-            }), 500
+            }), 503 if "Ollama" in result.get("error", "") else 500
         
         # Build response
         response = {
@@ -164,6 +176,7 @@ def generate_suggestions():
 
 
 @rag_bp.route('/health', methods=['GET'])
+@token_required
 def health_check():
     """
     Check health of RAG system components.
@@ -203,6 +216,7 @@ def health_check():
 
 
 @rag_bp.route('/rebuild-index', methods=['POST'])
+@token_required
 def rebuild_index():
     """
     Rebuild the FAISS vector index from the therapy corpus.
@@ -265,6 +279,7 @@ def rebuild_index():
 
 
 @rag_bp.route('/index-stats', methods=['GET'])
+@token_required
 def get_index_stats():
     """
     Get current vector store index statistics.
@@ -307,6 +322,7 @@ def get_index_stats():
 
 
 @rag_bp.route('/retrieve-topics', methods=['POST'])
+@token_required
 def retrieve_topics():
     """
     Retrieve relevant therapy topics for a query.
@@ -352,7 +368,7 @@ def retrieve_topics():
             }), 400
         
         top_k = data.get('top_k', 5)
-        if not isinstance(top_k, int) or top_k < 1 or top_k > 20:
+        if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k < 1 or top_k > 20:
             return jsonify({
                 "status": "error",
                 "error": "top_k must be integer between 1 and 20",

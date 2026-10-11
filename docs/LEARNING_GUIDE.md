@@ -8,7 +8,7 @@ Setup for all exercises (repo root):
 source .venv/bin/activate
 ```
 
-Tags: **[OK]** works as written, **[FIX P2]/[FIX P3]** known problem scheduled for cleanup phase 2/3, **[MISSING]** not built yet.
+Tags: **[OK]** works as written, **[KNOWN GAP]** a limitation or defect still present, **[NOT INDEXED]** source material not yet in retrieval.
 
 ---
 
@@ -57,7 +57,7 @@ Three independent pipelines share one app. Learn them in this order, easiest fir
 | `app/ml/rag/utils.py` | Chunking, summarizing, keyword extraction (partly unused) | 3 |
 | `data/raw`, `data/processed` | Emotion dataset and train/validation split | 2 |
 | `data/therapy_corpus/seed_corpus.json` | The 49 hand-written topics that are actually indexed | 3 |
-| `data/therapy_corpus/*.pdf` | ~289 source PDFs; **not ingested yet** [FIX P2] | 3 |
+| `data/therapy_corpus/*.pdf` | ~289 source PDFs; **not ingested yet** [NOT INDEXED] | 3 |
 | `scripts/` | One-off tools: DB reset/fix, seed fake diary data, PDF extraction, smoke test, model eval | support |
 | `tests/` | pytest suites for the RAG endpoints (mocked pipeline) | support |
 | `frontend/src/services/api.js` | Axios instance, attaches JWT, journal/auth/analysis calls | UI |
@@ -107,7 +107,7 @@ python -c "import jwt,sys; print(jwt.decode(sys.argv[1], options={'verify_signat
 
 Note the payload is readable by anyone; the signature only prevents tampering.
 
-**Check yourself**: why does `get_entry` filter on both `id` and `user_id`? What happens if `SECRET_KEY` changes? (All old tokens become invalid.) **[FIX P3]**: the secret has a hard-coded fallback and `token_required` is copy-pasted in two files.
+**Check yourself**: why does `get_entry` filter on both `id` and `user_id`? What happens if `SECRET_KEY` changes? (All old tokens become invalid.) **[KNOWN GAP]**: the secret has a hard-coded fallback and `token_required` is copy-pasted in two files.
 
 ---
 
@@ -138,13 +138,13 @@ for sent, score in zip(s, KeywordImportanceScorer().score(s)):
 EOF
 ```
 
-Expected: "I am SO anxious about tomorrow" about 0.82 and "I feel completely alone." 1.00, while "The bus was late" is 0.00. Also print `split_into_sentences(text)` directly: it returns `['I went to the shop', '.', 'I am SO anxious ...', '!', ...]`, so the punctuation becomes separate list items (the regex capture group keeps them). That is a real bug worth spotting. **[FIX P3]**
+Expected: "I am SO anxious about tomorrow" about 0.82 and "I feel completely alone." 1.00, while "The bus was late" is 0.00. Also print `split_into_sentences(text)` directly: it returns `['I went to the shop', '.', 'I am SO anxious ...', '!', ...]`, so the punctuation becomes separate list items (the regex capture group keeps them). That is a real bug worth spotting. **[KNOWN GAP]**
 
 **Exercise 2.2: the valence math**: open `_get_emotion_valence_scores` and compute by hand the intensity for 100% `sadness` (answer about 2.1) and 100% `happiness` (about 9.3).
 
 **Exercise 2.3 (needs a checkpoint)**: `python -m scripts.eval_emotion_model`.
 
-**Status**: the checkpoint is gitignored. Without it `app/ml/inference.py` raises at import. **[FIX P3]**: make emotion analysis optional so RAG and the rest of the app still run.
+**Status**: the emotion checkpoint is gitignored and not present in a fresh clone, so emotion analysis requires training/providing that checkpoint. RAG startup is now independent and continues without it.
 
 ---
 
@@ -163,13 +163,13 @@ An LLM does not know your user or your trusted therapy material. RAG fixes that 
 
 ```
 Chatbot.jsx  generateTherapySuggestions()
- -> api/rag.py  validate_diary_entries, top_k check
+ -> api/rag.py  JWT + validate_diary_entries, question and top_k checks
    -> RAGPipeline.generate_suggestions()                (runner.py)
       1 analyze_diary_entries   join entries, summarize, keyword themes
-      2 retrieve_relevant_topics  summary query + per-theme queries -> merge by id
-         -> TherapyRetriever.retrieve -> embed_query -> FAISS search -> docs + score
+      2 retrieve_relevant_topics  question + summary + themes -> candidates -> dedupe -> rerank
+        -> TherapyRetriever -> embed_query -> cosine FAISS search -> docs + scores
       3 OllamaGenerator.generate_suggestions
-         build_system_prompt + build_user_prompt -> POST ollama /api/generate
+        build_system_prompt + bounded, cited build_user_prompt -> POST ollama /api/chat
    <- {suggestions, diary_analysis, retrieved_topics_count, model}
 ```
 
@@ -190,7 +190,7 @@ EOF
 
 Expected: about 0.60 (worry vs. job anxiety) against about 0.11 (worry vs. bread).
 
-**B. Index and vector store** (`indexer.py`, `vector_store.py`). Each topic is embedded as `title + category + content` and added to a FAISS `IndexFlatL2` (exact nearest neighbor). Metadata lives in a Python list at the same position as the vector. That position link is the whole trick.
+**B. Index and vector store** (`indexer.py`, `vector_store.py`). Each topic is embedded as `title + category + content`; vectors are unit-normalized and stored in FAISS `IndexFlatIP` (exact cosine-nearest-neighbor search). Metadata lives in a Python list at the same position as the vector. That position link is the whole trick.
 
 ```bash
 python - <<'EOF'
@@ -207,23 +207,18 @@ for d in TherapyRetriever(e, store).retrieve("I can't sleep and my mind races", 
 EOF
 ```
 
-Observed: for "I can't sleep and my mind races" the top hit is `emotion_003` (Window of Tolerance), then `sleep_001`, `depression_001`, `mindfulness_001`, and `health_002` (Mind-Body Connection). Scores are all about 0.4-0.45, so they separate poorly. `sleep_001` arguably deserves rank 1, which is exactly what reranking is for. Does each hit make sense to you? Try other queries ("my boss criticized me", "I feel numb"). **[FIX P2]**: L2 on non-normalized vectors; switch to normalized cosine (`IndexFlatIP`), which gives scores you can reason about.
+Observed before reranking, the broad semantic results could prefer a general mind-body topic over sleep hygiene. After normalized cosine plus lexical/theme reranking, "I can't sleep and my mind races" returns `health_002` then `sleep_001`, while an upcoming-presentation query returns `performance_001` first. The sleep result is still not perfect, which is a useful honest evaluation finding. Try other queries ("my boss criticized me", "I feel numb") and compare scores.
 
-**C. Query building** (`runner.py`, `utils.py`). Today the "summary" is the first sentences up to 500 characters, and themes are substring matches from a fixed keyword list. Entries arrive newest-first, so truncation keeps the wrong end and `date_range` is reversed. **[FIX P2]**: sort by date, weight recent entries, keep each entry's key sentence.
+**C. Query building** (`runner.py`, `utils.py`). Entries are sorted by date; the recent-first extractive summary uses up to 1200 characters, the date range is chronological, and themes are substring matches from a fixed keyword list. The user's chat question is combined with the summary for retrieval and is also placed explicitly in the generation prompt. This is deliberately simple extraction, not an LLM summary.
 
-**D. Reranking [MISSING]**. First-stage vector search is fast but coarse. Planned simple reranker (P2):
-1. Retrieve 15-30 candidates instead of 5.
-2. Score each: `0.7 * semantic + 0.2 * keyword/theme overlap + 0.1 * metadata fit` (category match, topic `keywords` field).
-3. Penalize duplicate categories to diversify; keep the top 5-6.
+**D. Reranking** (`reranker.py`). The retriever fetches up to `4 * top_k` candidates (capped at 50); summary and theme results are merged by ID. The reranker calculates `0.70 * semantic + 0.20 * query-term overlap + 0.10 * theme overlap`, then returns the requested top-k. This is a transparent heuristic, not a cross-encoder and not a guarantee. It does not yet penalize repeated categories. Exercise: temporarily change weights and inspect which queries improve or regress.
 
-You will implement this yourself with a test (see section 8).
-
-**E. Prompt assembly** (`generator.py`). The system prompt sets role and limits; the user prompt injects the diary summary and numbered topics. Today each topic is cut to 200 characters, so the LLM barely sees the knowledge. **[FIX P2]**: include full chunks within a token budget, label them `[1]`, `[2]` and require the answer to cite them.
+**E. Prompt assembly** (`generator.py`). The prompt includes the user question, recent diary summary, and numbered references with source/page metadata when available. Retrieved text is included within an approximate context budget, and the system prompt requires citations such as `[1]`. The current seed topics have no source page metadata, so they are labeled as curated topics.
 
 ```bash
 python - <<'EOF'
 from app.ml.rag.generator import OllamaGenerator
-g = OllamaGenerator.__new__(OllamaGenerator)   # skip the Ollama connection check
+g = OllamaGenerator()   # construction does not require Ollama to be running
 print(g.build_user_prompt("Anxious about work deadlines.", [{"title":"Cognitive Restructuring","category":"Anxiety","content":"Examine the evidence for worries. "*10}]))
 EOF
 ```
@@ -237,11 +232,11 @@ curl -s localhost:11434/api/chat -d '{
   "messages":[{"role":"system","content":"You are concise."},{"role":"user","content":"Name two CBT techniques."}]}'
 ```
 
-Current code differences **[FIX P2]**: it uses `/api/generate`, concatenates system and user text, and puts `temperature`/`top_p`/`num_predict` at the top level where Ollama ignores them (they belong under `options`). The first call after idle can take a long time while the model loads.
+The implementation calls `/api/chat` with separate system/user messages and puts `temperature`, `top_p`, `num_predict`, and `num_ctx` under `options`. The UI sends `stream: false`. The first call after idle can take a while while a local model loads.
 
-**G. Orchestration and startup** (`app/__init__.py`, `runner.py`). The pipeline is created lazily on the first request, inside the same `try` as the emotion model import. If the checkpoint is missing or Ollama is down, RAG stays `None` forever and every call returns 503. This explains the broken UI. **[FIX P3]**: initialize RAG independently, retry, and report Ollama status in `/api/rag/health`.
+**G. Orchestration and startup** (`app/__init__.py`, `runner.py`). The pipeline initializes lazily on the first `/api/rag/*` request, independently of the emotion checkpoint. Ollama is not checked during construction; health reports offline/missing model, and generation returns an actionable 503. A failed embedding-model/index initialization is still a startup failure to address; Ollama outages do not prevent retrieval startup.
 
-**H. UI** (`Chatbot.jsx`). It loads all entries, picks "therapy" vs "retrieve topics" by checking for words like "help", and renders the response. It uses hard-coded `fetch` URLs rather than `api.js`, and the RAG routes have no auth. **[FIX P3]**
+**H. UI** (`Chatbot.jsx`). Every user message is sent as `question`, with the latest 10 journal entries, through `ragAPI` (Axios attaches JWT). RAG endpoints require authentication. The UI shows model health and displays server errors instead of leaving the typing indicator spinning. `AuthPage` redirects successful login/signup to `/chatbot`.
 
 ### 6.4 Vocabulary to own
 
@@ -269,10 +264,10 @@ Current code differences **[FIX P2]**: it uses `/api/generate`, concatenates sys
 
 1. Run the app and the Section 4 curl exercises.
 2. Exercises 2.1 and 2.2, then read `long_text_handler.py` with the output beside you.
-3. RAG exercises A, B, E with the seed corpus. Write down which queries retrieve badly.
-4. Install Ollama, run exercise F, then call the real pipeline.
-5. Implement the reranker (D) in a new `app/ml/rag/reranker.py` and compare ranked lists before and after for your bad queries.
-6. Replace the 200-character truncation with a token budget and cite `[n]` sources.
+3. RAG exercises A and B. Write down expected topics for five different questions before looking at the results.
+4. Inspect reranker scores in D; change one weight at a time and record which expected queries improve or regress.
+5. Install Ollama, run exercise F, then ask the same questions through the UI and check whether citations match the retrieved topics.
+6. As a next improvement, add PDF ingestion with page-level metadata and a labeled retrieval evaluation set (precision@k/recall@k); do not assume a higher score is better without a judged dataset.
 
 ## 9. Questions you should be able to answer for an interview
 

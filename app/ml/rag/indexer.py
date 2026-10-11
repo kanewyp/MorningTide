@@ -72,9 +72,6 @@ class TherapyCorpusIndexer:
             logger.warning("No topics to index")
             return
 
-        # Clear existing index
-        self.vector_store.clear()
-
         # Extract texts for embedding
         texts = [
             f"{topic. get('title', '')} {topic.get('category', '')} {topic.get('content', '')}"
@@ -84,7 +81,7 @@ class TherapyCorpusIndexer:
         logger.info(f"Generating embeddings for {len(texts)} documents...")
         embeddings = self.embedder.embed_batch(texts)
 
-        # Add to vector store
+        self.vector_store.clear()
         self.vector_store.add_documents(embeddings, topics)
 
         logger.info(

@@ -42,6 +42,13 @@ export const journalAPI = {
     getAnalysis: (entryId) => api.get(`/api/analysis/${entryId}`),
 };
 
+export const ragAPI = {
+    generateSuggestions: (payload) => api.post("/api/rag/generate-suggestions", payload),
+    retrieveTopics: (query, topK = 5) =>
+        api.post("/api/rag/retrieve-topics", { query, top_k: topK }),
+    health: () => api.get("/api/rag/health"),
+};
+
 export const deleteEntry = async (entryId) => {
     const response = await api.delete(`/api/journal/entries/${entryId}`);
     return response.data;

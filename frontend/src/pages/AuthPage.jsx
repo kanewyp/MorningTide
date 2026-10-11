@@ -1,12 +1,19 @@
 ﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import Login from '../components/Auth/Login';
 import Signup from '../components/Auth/Signup';
 import './AuthPage.css';
 
 const AuthPage = () => {
+    const { user, loading } = useAuth();
     // STATE:  Track which form to show
     const [isLogin, setIsLogin] = useState(true);  // Start with login
+
+    if (!loading && user) {
+        return <Navigate to="/chatbot" replace />;
+    }
 
     return (
         <div className="auth-page">

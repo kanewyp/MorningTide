@@ -5,14 +5,14 @@ Coordinates diary analysis, retrieval, and generation for therapy suggestions.
 """
 
 import logging
-from typing import List, Dict, Optional
-from datetime import datetime, timedelta
+from typing import List, Dict
+from datetime import datetime
 
 from .embedding import SentenceTransformerEmbedder
 from .vector_store import FAISSVectorStore
 from .retriever import TherapyRetriever
 from . generator import OllamaGenerator, OllamaConfig
-from .utils import chunk_text, summarize_diary_entries
+from .utils import summarize_diary_entries
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class RAGPipeline:
         embedding_device: str = "cpu",
         vector_store_path: str = "./data/vector_store",
         ollama_base_url: str = "http://localhost:11434",
-        ollama_model:  str = "mistral",
+        ollama_model: str = "llama3.2:3b",
         chunk_size: int = 512,
         chunk_overlap: int = 64,
         top_k_retrieval: int = 5,
@@ -66,9 +66,14 @@ class RAGPipeline:
 
         self.retriever = TherapyRetriever(self.embedder, self.vector_store)
 
+        from app.config import Config
+
         ollama_config = OllamaConfig(
             base_url=ollama_base_url,
-            model=ollama_model
+            model=ollama_model,
+            temperature=Config.OLLAMA_TEMPERATURE,
+            top_p=Config.OLLAMA_TOP_P,
+            num_predict=Config.OLLAMA_NUM_PREDICT,
         )
         self.generator = OllamaGenerator(ollama_config)
 
@@ -87,7 +92,14 @@ class RAGPipeline:
         Returns:
             Dictionary with analysis results
         """
-        if not entries:
+        valid_entries = [
+            {"date": str(entry.get("date", "Unknown date")), "content": entry.get("content", "").strip()}
+            for entry in entries
+            if isinstance(entry.get("content"), str) and entry.get("content", "").strip()
+        ]
+        valid_entries.sort(key=lambda entry: entry["date"])
+
+        if not valid_entries:
             return {
                 "entry_count": 0,
                 "summary": "No diary entries found.",
@@ -96,20 +108,22 @@ class RAGPipeline:
             }
 
         # Combine entries
-        combined_text = "\n".join([
-            f"[{entry. get('date', 'Unknown date')}]\n{entry.get('content', '')}"
-            for entry in entries
-        ])
+        combined_text = "\n".join(
+            f"[{entry['date']}]\n{entry['content']}" for entry in valid_entries
+        )
 
-        # Summarize
-        summary = summarize_diary_entries(combined_text)
+        recent_first = "\n".join(
+            f"[{entry['date']}]\n{entry['content']}"
+            for entry in reversed(valid_entries)
+        )
+        summary = summarize_diary_entries(recent_first, max_length=1200)
 
         # Extract potential themes/keywords (simplified approach)
         themes = self._extract_themes(combined_text)
 
         return {
-            "entry_count": len(entries),
-            "date_range": self._get_date_range(entries),
+            "entry_count": len(valid_entries),
+            "date_range": self._get_date_range(valid_entries),
             "summary": summary,
             "themes": themes,
             "combined_text": combined_text
@@ -130,14 +144,14 @@ class RAGPipeline:
             if keyword. lower() in text.lower()
         ]
 
-        return list(set(themes))  # Deduplicate
+        return themes
 
     def _get_date_range(self, entries: List[Dict]) -> str:
         """Extract date range from entries."""
         if not entries:
             return "N/A"
 
-        dates = [entry.get('date') for entry in entries if entry.get('date')]
+        dates = sorted(entry.get('date') for entry in entries if entry.get('date'))
         if len(dates) < 2:
             return dates[0] if dates else "N/A"
 
@@ -145,7 +159,9 @@ class RAGPipeline:
 
     def retrieve_relevant_topics(
         self,
-        analysis: Dict
+        analysis: Dict,
+        k: int = None,
+        query: str = "",
     ) -> List[Dict]:
         """
         Retrieve relevant therapy topics based on diary analysis.
@@ -157,29 +173,33 @@ class RAGPipeline:
             List of relevant therapy topics
         """
         # Use summary and themes for retrieval
-        summary = analysis. get("summary", "")
+        summary = analysis.get("summary", "")
         themes = analysis.get("themes", [])
+        retrieval_query = " ".join(part for part in (query.strip(), summary) if part)
+        result_limit = k if k is not None else self.top_k_retrieval
+        candidate_limit = min(max(result_limit * 4, 20), 50)
 
-        if summary: 
-            # Primary retrieval using summary
-            results = self.retriever.retrieve(
-                summary,
-                k=self.top_k_retrieval
-            )
-        else:
-            results = []
+        candidates = (
+            self.retriever.retrieve_candidates(retrieval_query, k=candidate_limit)
+            if retrieval_query else []
+        )
 
-        # Augment with theme-based retrieval
         if themes:
-            theme_results = self.retriever. retrieve_by_keywords(
+            candidates.extend(self.retriever.retrieve_by_keywords(
                 themes,
-                k=self.top_k_retrieval // 2
-            )
-            # Merge and deduplicate
-            result_ids = {r.get("id"): r for r in results}
-            for r in theme_results:
-                if r.get("id") not in result_ids:
-                    results.append(r)
+                k=candidate_limit,
+            ))
+
+        unique_candidates = {}
+        for candidate in candidates:
+            identity = candidate.get("id") or candidate.get("title")
+            previous = unique_candidates.get(identity)
+            if previous is None or candidate.get("similarity_score", 0) > previous.get("similarity_score", 0):
+                unique_candidates[identity] = candidate
+
+        results = self.retriever.reranker.rerank(
+            list(unique_candidates.values()), retrieval_query, themes, result_limit
+        )
 
         logger.info(f"Retrieved {len(results)} relevant therapy topics")
         return results
@@ -187,7 +207,9 @@ class RAGPipeline:
     def generate_suggestions(
         self,
         diary_entries: List[Dict[str, str]],
-        stream: bool = False
+        stream: bool = False,
+        top_k: int = None,
+        user_question: str = "",
     ) -> Dict:
         """
         Generate therapy suggestions for a user.
@@ -206,7 +228,9 @@ class RAGPipeline:
 
             # Retrieve relevant topics
             logger.info("Retrieving relevant therapy topics...")
-            topics = self.retrieve_relevant_topics(analysis)
+            topics = self.retrieve_relevant_topics(
+                analysis, k=top_k, query=user_question
+            )
 
             # Prepare context for LLM
             diary_summary = analysis.get("summary", "")
@@ -218,7 +242,8 @@ class RAGPipeline:
             suggestions = self.generator.generate_suggestions(
                 diary_context=diary_summary,
                 retrieved_topics=topics,
-                stream=stream
+                stream=stream,
+                user_question=user_question,
             )
 
             return {
@@ -244,13 +269,15 @@ class RAGPipeline:
 
     def health_check(self) -> Dict:
         """Check system health."""
+        generator_health = self.generator.health_check()
         return {
+            "status": "healthy" if generator_health.get("status") == "healthy" else "degraded",
             "embedder":  {
                 "model":  self.embedder.model_name,
                 "dimension": self.embedder.dimension,
                 "device": self.embedder.device
             },
             "vector_store": self.vector_store.get_stats(),
-            "generator": self.generator.health_check(),
+            "generator": generator_health,
             "timestamp": datetime.now().isoformat()
         }

@@ -15,7 +15,7 @@ The product is a journaling companion, not a diagnostic or replacement therapist
 - **Persistence:** SQLite database (`users`, `journal_entries`, `analysis_results`). Journal entries are user-scoped; an entry is unique per user/date in the application workflow and is updated when the same date is saved again.
 - **Authentication:** Signup/login hash passwords with Werkzeug and issue 30-day HS256 JWTs. Journal and analysis routes validate the bearer token and enforce ownership before reading or mutating data.
 - **Emotion ML:** A fine-tuned DistilBERT sequence classifier with 20 emotion classes. Inference returns top emotions, probabilities, and a valence-derived 1-10 emotional score.
-- **RAG:** Local Sentence Transformers embeddings (`all-MiniLM-L6-v2`, 384 dimensions), FAISS vector search, a curated JSON therapy corpus, and a local Ollama model (default `mistral`) for final generation.
+- **RAG:** Local Sentence Transformers embeddings (`all-MiniLM-L6-v2`, 384 dimensions), normalized-cosine FAISS search, deterministic lexical/theme reranking, a curated JSON therapy corpus, and Ollama chat generation (default `llama3.2:3b`).
 
 ## Main user flows
 
@@ -30,56 +30,49 @@ For short text, the classifier runs once. For long text, `AdaptiveEmotionAnalyze
 
 ### RAG therapy-session preparation
 
-1. The client sends one or more `{date, content}` diary entries to `/api/rag/generate-suggestions` with `top_k` and optional streaming.
-2. The pipeline combines entries with date markers, creates a compact summary, extracts lightweight themes such as anxiety, sleep, work, grief, or relationships, and calculates the date range.
-3. The summary is embedded and searched against the FAISS index. Theme keywords are also searched and merged by document ID.
-4. Retrieved topic records are ranked and passed as bounded context to Ollama with the diary summary.
-5. Ollama returns 3-5 structured discussion topics. Each should contain a title, why it relates to the entries, a therapy connection, a specific reflection/discussion prompt, and a suggested session focus.
+1. The authenticated client sends one or more `{date, content}` diary entries, the user's `question`, and `top_k` to `/api/rag/generate-suggestions`.
+2. The pipeline sorts entries by date, builds a recent-first extractive summary, extracts lightweight themes, and calculates a chronological date range.
+3. The combined question and summary are embedded and searched against FAISS. Theme queries add candidates; records are deduplicated and reranked.
+4. The top topics and journal summary are passed to Ollama's `/api/chat` endpoint with source labels, citations, and a context-window budget.
+5. Ollama answers the user's actual question. For session preparation, it suggests practical discussion topics and reflection questions without diagnosing or prescribing.
 6. The API returns status, timestamp, diary metadata, retrieved-topic count, generated suggestions, and model name.
 
 ## RAG architecture
 
 ### Offline/indexing path
 
-The source corpus is `data/therapy_corpus/seed_corpus.json`. Each topic contains an ID, category, title, explanatory content, keywords, difficulty, and related-topic IDs. `TherapyCorpusIndexer` embeds the concatenation of title, category, and content, then stores vectors in FAISS and the original records in a parallel metadata pickle. The persisted index is loaded at startup; an empty index is rebuilt automatically. `/api/rag/rebuild-index` supports explicit rebuilds.
+The default source corpus is `data/therapy_corpus/seed_corpus.json` (49 topics). The PDFs in the same directory are not currently indexed. Each JSON topic contains an ID, category, title, explanatory content, keywords, difficulty, and related-topic IDs. `TherapyCorpusIndexer` embeds title, category, and content, then stores normalized vectors in FAISS and records in a parallel metadata pickle. The persisted index is loaded on the first RAG request; an empty or incompatible index is rebuilt. Embeddings are computed before replacing the prior index. `/api/rag/rebuild-index` performs a synchronous rebuild.
 
 ### Online/query path
 
-`RAGPipeline` owns the embedder, `FAISSVectorStore`, `TherapyRetriever`, and `OllamaGenerator`. The retriever performs dense semantic search using L2 distance converted to a bounded similarity score `1 / (1 + distance)`. The pipeline combines two signals:
+`RAGPipeline` owns the embedder, `FAISSVectorStore`, `TherapyRetriever`, and `OllamaGenerator`. The retriever normalizes document and query vectors and uses FAISS `IndexFlatIP`, making inner product equivalent to cosine similarity. Scores are mapped to `[0, 1]`. The pipeline combines two signals:
 
 - **Semantic query:** the diary summary captures meaning and paraphrase.
 - **Theme queries:** extracted keywords provide interpretable lexical anchors and increase recall for obvious topics.
 
-Results are deduplicated by topic ID and truncated to the configured top-k/context budget. The generator receives only the summary and selected corpus snippets, not an unbounded dump of the user's history.
+The retriever fetches up to four times the requested `top_k` (at most 50) as candidates. Results from summary and theme queries are deduplicated by topic ID and reranked. Each score is `0.70 * semantic + 0.20 * query-term overlap + 0.10 * theme overlap`. The generator receives the question, a bounded recent summary, and selected corpus text, not an unbounded dump of journal history.
 
-### Simple reranking stage
+### Reranking stage
 
-The repository's current retrieval path is effectively first-stage dense retrieval plus theme-result merging; it has no independent cross-encoder reranker. The intended production-quality/simple completion is:
-
-1. Retrieve a wider candidate set, for example 15-30 topics, using FAISS and keyword/theme search.
-2. Normalize each candidate's semantic score and compute a lexical/theme overlap score from the candidate title, category, content, and keywords.
-3. Optionally add small metadata bonuses for matching category, difficulty, or related themes; apply a diversity penalty when several candidates have the same category.
-4. Rank with a transparent weighted score such as `0.70 * semantic + 0.20 * theme_overlap + 0.10 * metadata_fit`, then keep the final 5-8 topics.
-
-This is a useful interview explanation because it separates **recall** (FAISS candidate generation) from **precision/context quality** (reranking). A stronger later version could replace the heuristic with a cross-encoder that scores `(diary summary, candidate topic)` pairs, but the simple scorer is deterministic, cheap, local, and easy to test.
+`app/ml/rag/reranker.py` implements a deterministic lexical reranker over candidate titles, categories, content, and keywords. It combines normalized semantic, query-term, and extracted-theme scores. This separates **recall** (wide FAISS candidate generation) from **precision/context ordering** (reranking). It is intentionally a simple baseline: it does not yet cross-encode query/document pairs or enforce category diversity. A later evaluation can compare it to a cross-encoder using labeled query-to-topic examples.
 
 ### Generation and safety boundary
 
-The system prompt tells the LLM to be empathetic, non-judgmental, practical, evidence-aware, and explicit that it does not replace therapy. The model is asked to suggest conversation topics and reflection prompts, not diagnose, prescribe, or claim certainty. Retrieved corpus content grounds the language and reduces purely free-form hallucination; the user's journal remains the personalization source.
+The system prompt tells the LLM to answer the user's actual question, be empathetic and practical, cite supplied references as `[n]`, and not diagnose or prescribe. Full retrieved text is included within an approximate character budget derived from the model context and output budgets. The UI uses `stream: false`; true token-by-token browser streaming is not implemented. Retrieved material helps ground responses but cannot guarantee factuality.
 
 ## API surface
 
 - `POST /auth/signup`, `POST /auth/login`, `GET /auth/verify`: account and token lifecycle.
 - `POST/GET/DELETE /api/journal/entries` and `GET /api/journal/entries/<id>`: user-scoped diary CRUD and date-range history.
 - `POST /api/analysis/analyze`, `GET /api/analysis/<entry_id>`: emotion inference and persisted analysis.
-- `POST /api/rag/generate-suggestions`: end-to-end diary-to-suggestions workflow.
-- `POST /api/rag/retrieve-topics`: direct retrieval/debugging surface.
+- `POST /api/rag/generate-suggestions`: authenticated, end-to-end question + diary + retrieval + generation workflow.
+- `POST /api/rag/retrieve-topics`: authenticated direct retrieval/debugging surface.
 - `GET /api/rag/health`, `GET /api/rag/index-stats`: operational visibility.
 - `POST /api/rag/rebuild-index`: corpus reindexing.
 
 ## Startup and dependencies
 
-The Flask app creates the SQLite schema and registers blueprints. On the first request it loads the emotion model and initializes the RAG pipeline. RAG startup requires the embedding model, FAISS, a readable corpus/index location, and an accessible Ollama server with the configured model. Configuration is centralized in `app/config.py` and can be overridden with environment variables such as `OLLAMA_MODEL`, `EMBEDDING_MODEL`, `VECTOR_STORE_PATH`, `RAG_TOP_K_RETRIEVAL`, and `RAG_CORPUS_PATH`.
+The Flask app creates the SQLite schema and registers blueprints. The first `/api/rag/*` request lazily loads the embedder and index independently of the optional emotion checkpoint. Ollama is not required for retrieval startup; if it is unavailable or the configured model is missing, health reports a degraded state and generation returns an actionable 503. Configuration is centralized in `app/config.py` and can be overridden with environment variables such as `OLLAMA_MODEL`, `EMBEDDING_MODEL`, `VECTOR_STORE_PATH`, `RAG_TOP_K_RETRIEVAL`, and `RAG_CORPUS_PATH`.
 
 ## Interview-level design decisions
 
@@ -92,8 +85,8 @@ The Flask app creates the SQLite schema and registers blueprints. On the first r
 
 ## Assumed working behavior and known improvement points
 
-For architectural discussion, treat initialization, retrieval, and generation as operational. In a real maintenance pass, the most important hardening areas are explicit reranking, per-request pipeline configuration instead of mutating shared `top_k`, stronger date validation, secret/configuration management, stricter prompt/context token budgeting, index versioning and atomic rebuilds, and tests that validate ranking quality and grounding rather than only response shape. Streaming would also need a true streaming HTTP response contract instead of collecting the stream into one string.
+For architectural discussion, local embedding, retrieval, reranking, authenticated UI/API wiring, and mocked end-to-end generation have been exercised. Real Ollama generation remains unverified until Ollama and `llama3.2:3b` are installed. Remaining quality work includes indexing the PDFs with page-level citations, adding a labeled retrieval evaluation set, improving diary summarization, securing the development secret, validating dates, adding index versioning/atomic pair persistence, and testing answer grounding. The heuristic reranker is a baseline, not a guarantee of relevance.
 
 ## Compact mental model
 
-`React client -> JWT-protected Flask API -> SQLite journal + cached emotion analysis -> RAGPipeline(summary/themes -> embed -> FAISS candidates -> rerank -> bounded prompt -> Ollama) -> structured therapy-session preparation`
+`React client(question + latest 10 diary entries) -> JWT-protected Flask API -> recent-first summary + themes -> normalized cosine candidates -> lexical/theme rerank -> bounded cited prompt -> Ollama /api/chat -> answer`

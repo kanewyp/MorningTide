@@ -150,7 +150,7 @@ class Config:
     # ==================== RAG Configuration (NEW) ====================
     # Ollama Settings
     OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "mistral")
+    OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2:3b")
     OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", "0.7"))
     OLLAMA_TOP_P = float(os.getenv("OLLAMA_TOP_P", "0.9"))
     OLLAMA_NUM_PREDICT = int(os. getenv("OLLAMA_NUM_PREDICT", "512"))

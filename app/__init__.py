@@ -5,6 +5,7 @@ Initializes Flask app with all blueprints, database, ML models, and RAG pipeline
 """
 
 import logging
+import threading
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Global RAG pipeline instance
 _rag_pipeline = None
+_rag_init_lock = threading.Lock()
 
 
 def get_rag_pipeline():
@@ -165,26 +167,20 @@ def create_app():
             response. headers.add('Access-Control-Allow-Credentials', 'true')
             return response, 204
 
-    # Load ML models and RAG pipeline on first request (NEW - ENHANCED)
+    # Initialize RAG independently from the optional emotion checkpoint.
     @app.before_request
-    def load_ml_models():
-        if not hasattr(load_ml_models, 'loaded'):
-            try:
-                # Load emotion classification model
-                from app.ml. inference import emotion_classifier
-                logger.info("✓ Emotion classification model loaded")
-                print("✓ ML model loaded")
-                
-                # Initialize RAG pipeline
-                logger.info("Initializing RAG pipeline...")
-                initialize_rag_pipeline()
-                
-                load_ml_models.loaded = True
-                
-            except Exception as e:
-                logger.warning(f"⚠️  ML model/RAG initialization warning: {e}")
-                print(f"⚠️  ML/RAG initialization warning: {e}")
-                load_ml_models.loaded = True
+    def load_rag_pipeline():
+        if not request.path.startswith('/api/rag/'):
+            return
+        if app.extensions.get('rag_init_attempted'):
+            return
+
+        with _rag_init_lock:
+            if app.extensions.get('rag_init_attempted'):
+                return
+            logger.info("Initializing RAG pipeline...")
+            initialize_rag_pipeline()
+            app.extensions['rag_init_attempted'] = True
 
     # Global error handler for RAG-specific errors
     @app.errorhandler(RuntimeError)
