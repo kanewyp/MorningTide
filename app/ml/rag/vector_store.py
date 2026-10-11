@@ -77,7 +77,8 @@ class FAISSVectorStore:
     def add_documents(
         self,
         embeddings: np.ndarray,
-        documents: List[Dict]
+        documents: List[Dict],
+        save: bool = True,
     ) -> None:
         """
         Add documents with their embeddings to the index. 
@@ -110,8 +111,8 @@ class FAISSVectorStore:
             f"(total: {self.index.ntotal})"
         )
 
-        # Save to disk
-        self. save()
+        if save:
+            self.save()
 
     def search(
         self,

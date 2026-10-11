@@ -14,7 +14,8 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8000))
     
     # Get debug mode from environment or default to True for development
-    debug = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    # Off by default: the reloader forks the process and loads torch twice
+    debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     print("=" * 50)
     print("🌊 MorningTide Backend Server Starting...")

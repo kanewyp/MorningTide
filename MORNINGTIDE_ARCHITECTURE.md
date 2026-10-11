@@ -41,7 +41,7 @@ For short text, the classifier runs once. For long text, `AdaptiveEmotionAnalyze
 
 ### Offline/indexing path
 
-The default source corpus is `data/therapy_corpus/seed_corpus.json` (49 topics). The PDFs in the same directory are not currently indexed. Each JSON topic contains an ID, category, title, explanatory content, keywords, difficulty, and related-topic IDs. `TherapyCorpusIndexer` embeds title, category, and content, then stores normalized vectors in FAISS and records in a parallel metadata pickle. The persisted index is loaded on the first RAG request; an empty or incompatible index is rebuilt. Embeddings are computed before replacing the prior index. `/api/rag/rebuild-index` performs a synchronous rebuild.
+The default source corpus is `data/therapy_corpus/`, containing the curated JSON topics and PDF resources. PDFs are extracted one page at a time and split into overlapping word-count chunks; each chunk retains its PDF source and one-based page number. `TherapyCorpusIndexer` streams documents into configurable embedding batches (`RAG_EMBED_BATCH_SIZE`, default 16), then stores normalized vectors in FAISS and records in a parallel metadata pickle. The persisted index is loaded on the first RAG request; an empty or incompatible index is rebuilt. `/api/rag/rebuild-index` performs a synchronous rebuild.
 
 ### Online/query path
 

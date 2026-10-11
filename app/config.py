@@ -170,10 +170,11 @@ class Config:
     RAG_CONTEXT_WINDOW = int(os. getenv("RAG_CONTEXT_WINDOW", "4096"))
     RAG_CHUNK_SIZE = int(os.getenv("RAG_CHUNK_SIZE", "512"))
     RAG_CHUNK_OVERLAP = int(os. getenv("RAG_CHUNK_OVERLAP", "64"))
+    RAG_EMBED_BATCH_SIZE = int(os.getenv("RAG_EMBED_BATCH_SIZE", "16"))
     RAG_TOP_K_RETRIEVAL = int(os.getenv("RAG_TOP_K_RETRIEVAL", "5"))
     RAG_CORPUS_PATH = os.getenv(
         "RAG_CORPUS_PATH",
-        str(DATA_DIR / "therapy_corpus" / "seed_corpus.json")
+        str(DATA_DIR / "therapy_corpus")
     )
     
     # ========== Methods ==========

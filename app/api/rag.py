@@ -251,7 +251,12 @@ def rebuild_index():
                 pipeline.vector_store
             )
             
-            indexer.build_index(Config.RAG_CORPUS_PATH)
+            indexer.build_index(
+                Config.RAG_CORPUS_PATH,
+                chunk_size=pipeline.chunk_size,
+                chunk_overlap=pipeline.chunk_overlap,
+                batch_size=Config.RAG_EMBED_BATCH_SIZE,
+            )
             
             logger.info("✓ Index rebuild complete")
             

@@ -57,15 +57,26 @@ def initialize_rag_pipeline():
             max_context_tokens=Config.RAG_CONTEXT_WINDOW
         )
         
-        # Initialize corpus index if empty
-        if _rag_pipeline.vector_store.index. ntotal == 0:
-            logger.info("📚 Vector store is empty, building index from corpus...")
-            indexer = TherapyCorpusIndexer(
-                _rag_pipeline.embedder,
-                _rag_pipeline.vector_store
+        indexer = TherapyCorpusIndexer(
+            _rag_pipeline.embedder,
+            _rag_pipeline.vector_store
+        )
+        # The app only loads a prebuilt index; building is an offline job:
+        #   python -m scripts.build_index
+        if _rag_pipeline.vector_store.index.ntotal == 0:
+            logger.error(
+                "Vector store is empty. Build it from a terminal with "
+                "`python -m scripts.build_index`."
             )
-            indexer.build_index(Config.RAG_CORPUS_PATH)
-            logger.info("✓ Corpus index built successfully")
+        elif not indexer.is_index_current(
+            Config.RAG_CORPUS_PATH,
+            chunk_size=Config.RAG_CHUNK_SIZE,
+            chunk_overlap=Config.RAG_CHUNK_OVERLAP,
+        ):
+            logger.warning(
+                "Corpus changed since the index was built; serving the existing "
+                "index. Re-run `python -m scripts.build_index` to refresh it."
+            )
         else:
             logger.info(
                 f"✓ Using existing index with "

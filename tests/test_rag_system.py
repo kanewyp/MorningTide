@@ -1,6 +1,10 @@
+import json
+
 import numpy as np
+import pymupdf
 
 from app.ml.rag.generator import OllamaConfig, OllamaGenerator
+from app.ml.rag.indexer import TherapyCorpusIndexer
 from app.ml.rag.reranker import TherapyReranker
 from app.ml.rag.runner import RAGPipeline
 from app.ml.rag.vector_store import FAISSVectorStore
@@ -104,3 +108,86 @@ def test_pipeline_prioritizes_recent_entries_and_isolates_top_k():
     assert "newest" in analysis["summary"]
     assert pipeline.retrieve_relevant_topics(analysis, k=1, query="sleep")
     assert pipeline.top_k_retrieval == 5
+
+
+def test_indexer_indexes_pdf_pages_and_invalidates_changed_sources(tmp_path):
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    (corpus / "seed_corpus.json").write_text(
+        json.dumps({"topics": [{"id": "seed", "title": "Seed", "content": "Curated topic."}]}),
+        encoding="utf-8",
+    )
+    pdf = pymupdf.open()
+    page = pdf.new_page()
+    page.insert_text((72, 72), "Grounding practice can help settle stress before a difficult conversation.")
+    pdf.save(corpus / "Grounding.pdf")
+    pdf.close()
+
+    class Embedder:
+        model_name = "test-embedder"
+        batch_sizes = []
+
+        def embed_batch(self, texts):
+            self.batch_sizes.append(len(texts))
+            return np.tile(np.array([[1.0, 0.0]], dtype=np.float32), (len(texts), 1))
+
+    embedder = Embedder()
+    store = FAISSVectorStore(str(tmp_path / "index"), dimension=2)
+    indexer = TherapyCorpusIndexer(embedder, store)
+    indexer.build_index(
+        str(corpus), chunk_size=20, chunk_overlap=3, batch_size=1
+    )
+
+    pdf_record = next(record for record in store.metadata if record.get("source") == "Grounding.pdf")
+    assert store.index.ntotal == 2
+    assert embedder.batch_sizes == [1, 1]
+    assert pdf_record["page"] == 1
+    assert "Grounding practice" in pdf_record["content"]
+    assert indexer.is_index_current(str(corpus), chunk_size=20, chunk_overlap=3)
+
+    (corpus / "Grounding.pdf").touch()
+    assert not indexer.is_index_current(str(corpus), chunk_size=20, chunk_overlap=3)
+
+
+def test_failed_rebuild_preserves_existing_index(tmp_path):
+    corpus = tmp_path / "corpus.json"
+    corpus.write_text(
+        json.dumps([{"id": "original", "content": "Original topic."}]),
+        encoding="utf-8",
+    )
+
+    class Embedder:
+        model_name = "test-embedder"
+        calls = 0
+        fail_on_call = None
+
+        def embed_batch(self, texts):
+            self.calls += 1
+            if self.calls == self.fail_on_call:
+                raise RuntimeError("synthetic embedding failure")
+            return np.tile(np.array([[1.0, 0.0]], dtype=np.float32), (len(texts), 1))
+
+    embedder = Embedder()
+    store = FAISSVectorStore(str(tmp_path / "index"), dimension=2)
+    indexer = TherapyCorpusIndexer(embedder, store)
+    indexer.build_index(str(corpus), batch_size=1)
+    embedder.fail_on_call = embedder.calls + 2
+    corpus.write_text(
+        json.dumps([
+            {"id": "replacement-1", "content": "Replacement topic one."},
+            {"id": "replacement-2", "content": "Replacement topic two."},
+        ]),
+        encoding="utf-8",
+    )
+
+    try:
+        indexer.build_index(str(corpus), batch_size=1)
+    except RuntimeError as error:
+        assert str(error) == "synthetic embedding failure"
+    else:
+        raise AssertionError("Expected the synthetic embedding failure")
+
+    reloaded = FAISSVectorStore(str(tmp_path / "index"), dimension=2)
+    assert reloaded.index.ntotal == 1
+    assert reloaded.metadata[0]["id"] == "original"
+    assert indexer.manifest_path.exists()

@@ -8,7 +8,7 @@ Setup for all exercises (repo root):
 source .venv/bin/activate
 ```
 
-Tags: **[OK]** works as written, **[KNOWN GAP]** a limitation or defect still present, **[NOT INDEXED]** source material not yet in retrieval.
+Tags: **[OK]** works as written, **[KNOWN GAP]** a limitation or defect still present.
 
 ---
 
@@ -50,14 +50,14 @@ Three independent pipelines share one app. Learn them in this order, easiest fir
 | `app/ml/utils.py` | `split_into_sentences`, `count_words` | 2 |
 | `app/ml/rag/embedding.py` | Text to vector (Sentence Transformers `all-MiniLM-L6-v2`, 384 dims) | 3 |
 | `app/ml/rag/vector_store.py` | FAISS index + parallel metadata list, saved to `data/vector_store/` | 3 |
-| `app/ml/rag/indexer.py` | Reads corpus JSON, embeds, fills the store | 3 |
+| `app/ml/rag/indexer.py` | Streams corpus JSON/PDF documents through bounded embedding batches, fills the store | 3 |
 | `app/ml/rag/retriever.py` | Query to top-k documents; keyword fan-out merge | 3 |
 | `app/ml/rag/generator.py` | Prompt building and the Ollama HTTP call | 3 |
 | `app/ml/rag/runner.py` | `RAGPipeline`: orchestrates analyze, retrieve, generate | 3 |
 | `app/ml/rag/utils.py` | Chunking, summarizing, keyword extraction (partly unused) | 3 |
 | `data/raw`, `data/processed` | Emotion dataset and train/validation split | 2 |
-| `data/therapy_corpus/seed_corpus.json` | The 49 hand-written topics that are actually indexed | 3 |
-| `data/therapy_corpus/*.pdf` | ~289 source PDFs; **not ingested yet** [NOT INDEXED] | 3 |
+| `data/therapy_corpus/seed_corpus.json` | The hand-written topics included in the corpus index | 3 |
+| `data/therapy_corpus/*.pdf` | PDF resources extracted page-by-page and chunked before indexing | 3 |
 | `scripts/` | One-off tools: DB reset/fix, seed fake diary data, PDF extraction, smoke test, model eval | support |
 | `tests/` | pytest suites for the RAG endpoints (mocked pipeline) | support |
 | `frontend/src/services/api.js` | Axios instance, attaches JWT, journal/auth/analysis calls | UI |

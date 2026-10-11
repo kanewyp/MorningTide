@@ -19,7 +19,7 @@ class SentenceTransformerEmbedder:
     def __init__(
         self,
         model_name: str = "all-MiniLM-L6-v2",
-        device: str = "xpu"
+        device: str = "cpu"
     ):
         """
         Initialize embedder with specified model.
@@ -75,17 +75,34 @@ class SentenceTransformerEmbedder:
         """
         return self.embed_text(query)
 
-    def embed_batch(self, texts: List[str]) -> np.ndarray:
+    def embed_batch(
+        self,
+        texts: List[str],
+        batch_size: int = 32,
+        show_progress_bar: bool = False,
+    ) -> np.ndarray:
         """
-        Embed a batch of texts.
+        Embed a batch of texts in bounded model-sized sub-batches.
 
         Args:
             texts: List of strings
+            batch_size: Texts encoded per model forward pass
+            show_progress_bar: Display tqdm progress while encoding
 
         Returns:
-            Embeddings (n_texts, dimension)
+            Normalized embeddings (n_texts, dimension)
         """
-        return self.embed_text(texts)
+        try:
+            return self.model.encode(
+                texts,
+                batch_size=batch_size,
+                convert_to_numpy=True,
+                normalize_embeddings=True,
+                show_progress_bar=show_progress_bar,
+            )
+        except Exception as e:
+            logger.error(f"Batch embedding generation failed: {e}")
+            raise RuntimeError(f"Failed to generate embeddings: {e}")
 
     def get_dimension(self) -> int:
         """Get embedding dimension."""
